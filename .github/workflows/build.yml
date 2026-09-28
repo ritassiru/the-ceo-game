@@ -1,0 +1,49 @@
+# Gera de novo o index.html sempre que algo em fonte/ mudar na branch main.
+# Assim dá para editar decisions.json direto pelo site do GitHub.
+# Se o build ou o checar.py falharem, nada é salvo e o GitHub avisa por e-mail.
+name: Gerar o jogo
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "fonte/**"
+  workflow_dispatch:   # permite rodar à mão em Actions → Gerar o jogo → Run workflow
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Gerar index.html
+        run: python fonte/build.py
+
+      - name: Conferir o balanceamento
+        run: |
+          pip install --quiet numpy
+          python fonte/checar.py | tee checar.txt
+          grep -q "OK, balanceado" checar.txt
+
+      - name: Salvar o index.html
+        run: |
+          if git diff --quiet -- index.html; then
+            echo "index.html já estava atualizado."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898900+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Gera index.html a partir de fonte/"
+          git push

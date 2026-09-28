@@ -99,6 +99,6 @@ em largura de celular, para conferir.
   claude.ai. Quando o GitHub Pages estiver ativo, o professor vai atualizar
   esses arquivos.
 - Licença do repositório ainda não definida.
-- Ideia: uma GitHub Action que rode `fonte/build.py` sempre que
-  `fonte/decisions.json` mudar, para o professor editar situações direto pelo
-  site do GitHub.
+- A GitHub Action `.github/workflows/build.yml` roda `build.py` e `checar.py`
+  a cada push em `fonte/` e salva o `index.html`. Depois de um push, faça
+  `git pull` antes de continuar, porque a Action pode ter criado um commit.

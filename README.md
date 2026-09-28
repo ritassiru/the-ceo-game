@@ -125,6 +125,13 @@ python3 fonte/checar.py     # confere o balanceamento (1 a 2 minutos)
 O `checar.py` testa todas as combinações possíveis de perguntas e avisa se
 alguma delas deixou de alcançar as três faixas de final.
 
+**Editando pelo site do GitHub:** não precisa rodar nada. Sempre que um arquivo
+de `fonte/` muda na branch `main`, a GitHub Action *Gerar o jogo*
+(`.github/workflows/build.yml`) roda o `build.py` e o `checar.py` e salva o
+`index.html` novo sozinha, em cerca de 2 minutos. Se o build der erro ou o
+balanceamento não passar, o `index.html` não é alterado e o GitHub avisa por
+e-mail; os detalhes ficam na aba **Actions** do repositório.
+
 ## Privacidade
 
 O jogo não envia nada para lugar nenhum. O histórico, o mapa de finais e a
