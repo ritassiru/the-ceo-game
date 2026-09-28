@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The CEO Game</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fraunces:opsz,wght@9..144,600;9..144,800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F6F0E6;
+  --panel: #FFFFFF;
+  --ink: #2B1721;
+  --muted: #6E5C63;
+  --berry: #6D2E46;
+  --rose: #A26769;
+  --cream: #ECE2D0;
+  --line: #D9CBBE;
+  --cash: #3E8E6B;
+  --rep: #C08A2E;
+  --bad: #B0413E;
+  --scene: #E9DDCB;
+  --scene-2: #DCCBB4;
+  --btn-text: #FFFFFF;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1E1318; --panel: #2A1C23; --ink: #F1E7EA; --muted: #BFA9B1;
+    --berry: #C77A98; --rose: #D19A9C; --cream: #3A2830; --line: #4A3540;
+    --cash: #62B891; --rep: #E0AE55; --bad: #E07571;
+    --scene: #33232B; --scene-2: #2B1D24; --btn-text: #1E1318;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1E1318; --panel: #2A1C23; --ink: #F1E7EA; --muted: #BFA9B1;
+  --berry: #C77A98; --rose: #D19A9C; --cream: #3A2830; --line: #4A3540;
+  --cash: #62B891; --rep: #E0AE55; --bad: #E07571;
+  --scene: #33232B; --scene-2: #2B1D24; --btn-text: #1E1318;
+}
+:root { box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+*, *::before, *::after { box-sizing: inherit; }
+[hidden] { display: none !important; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: "Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-size: 18px; line-height: 1.5;
+}
+.wrap { max-width: 540px; margin: 0 auto; padding: 16px 16px 32px; }
+h1, h2, .who-name, .brand {
+  font-family: "Fraunces", Georgia, "Times New Roman", serif;
+  font-weight: 800; letter-spacing: -0.01em;
+}
+h1 { font-size: 2.3rem; line-height: 1.05; margin: 0 0 8px; color: var(--berry); }
+h2 { font-size: 1.7rem; line-height: 1.1; margin: 0 0 10px; color: var(--berry); }
+p { margin: 0 0 12px; }
+.hint { color: var(--muted); font-size: 0.95rem; }
+
+/* ---------- top bar + gauges ---------- */
+.top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+.brand { font-size: 1.25rem; color: var(--berry); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.step { color: var(--muted); font-size: 0.95rem; white-space: nowrap; }
+.gauges { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+.gauge { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px 10px; position: relative; }
+.g-row { display: flex; justify-content: space-between; align-items: baseline; font-size: 0.95rem; margin-bottom: 6px; }
+.g-row b { font-size: 1.15rem; font-variant-numeric: tabular-nums; }
+.track { height: 12px; background: var(--cream); border-radius: 6px; overflow: hidden; }
+.fill { height: 100%; border-radius: 6px; transition: width 700ms cubic-bezier(.2,.8,.2,1); }
+.gauge.cash .fill { background: var(--cash); }
+.gauge.rep .fill { background: var(--rep); }
+.delta {
+  position: absolute; right: 10px; top: -14px; font-weight: 700; font-size: 1rem;
+  padding: 1px 8px; border-radius: 999px; background: var(--panel); border: 1px solid currentColor;
+  animation: pop 1600ms ease-out forwards;
+}
+.delta.up { color: var(--cash); } .delta.down { color: var(--bad); }
+@keyframes pop { 0% { opacity: 0; transform: translateY(8px) scale(.8); } 15% { opacity: 1; transform: translateY(0) scale(1.08); } 30% { transform: scale(1); } 80% { opacity: 1; } 100% { opacity: 0; transform: translateY(-6px); } }
+
+/* ---------- scene + dialogue ---------- */
+.scene {
+  position: relative; height: 210px; border-radius: 14px 14px 0 0; overflow: hidden;
+  background: linear-gradient(var(--scene) 0 72%, var(--scene-2) 72% 100%);
+  border: 1px solid var(--line); border-bottom: 0;
+}
+.scene .window { position: absolute; left: 18px; top: 18px; width: 92px; height: 70px; border: 5px solid var(--panel); border-radius: 4px; background: #BFD6E0; opacity: .8; }
+.scene .window::after { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; width: 4px; margin-left: -2px; background: var(--panel); }
+.scene .plant { position: absolute; right: 22px; bottom: 58px; }
+.scene svg.avatar { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); width: 190px; height: 190px; }
+.box {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 0 0 14px 14px;
+  padding: 14px 16px 16px; min-height: 150px;
+}
+.who { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
+.who-name { font-size: 1.3rem; color: var(--berry); }
+.who-role { color: var(--muted); font-size: 0.95rem; }
+.line { font-size: 1.12rem; }
+
+.choices { display: grid; gap: 10px; margin-top: 14px; }
+button { font: inherit; }
+.btn {
+  display: block; width: 100%; text-align: left; cursor: pointer;
+  padding: 14px 16px; border-radius: 12px; font-size: 1.08rem; font-weight: 700;
+  background: var(--berry); color: var(--btn-text); border: 2px solid var(--berry);
+}
+.btn.alt { background: var(--panel); color: var(--berry); }
+.btn:hover { filter: brightness(1.08); }
+.btn:focus-visible, input:focus-visible, textarea:focus-visible, .gloss:focus-visible { outline: 3px solid var(--rep); outline-offset: 2px; }
+.btn.center { text-align: center; }
+
+/* ---------- glossary ---------- */
+.gloss {
+  background: none; border: 0; padding: 0; margin: 0; cursor: pointer; color: inherit;
+  font: inherit; text-decoration: underline dotted var(--rose); text-decoration-thickness: 2px; text-underline-offset: 3px;
+}
+#tip {
+  position: absolute; z-index: 20; max-width: 300px; pointer-events: none; display: none;
+  background: var(--ink); color: var(--bg); font-size: 0.95rem; padding: 6px 10px; border-radius: 8px;
+}
+#tip.on { display: block; }
+.gloss.verb { text-decoration-style: dashed; text-decoration-color: var(--berry); }
+#tip .vt { display: grid; grid-template-columns: repeat(3, auto); gap: 4px 12px; }
+#tip .vc { padding: 2px 6px; border-radius: 6px; border: 2px solid transparent; }
+#tip .vc.on { border-color: var(--rep); }
+#tip .vc span { display: block; font-size: 0.72rem; opacity: 0.8; }
+#tip .vc b { font-size: 1.02rem; }
+#tip .vpt { margin-top: 6px; }
+
+/* ---------- start / end / reflection ---------- */
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px 16px; margin-bottom: 14px; }
+label.lbl { display: block; font-weight: 700; margin-bottom: 6px; }
+input[type=text], textarea {
+  width: 100%; font: inherit; font-size: 1.05rem; color: var(--ink); background: var(--bg);
+  border: 2px solid var(--line); border-radius: 10px; padding: 10px 12px;
+}
+textarea { min-height: 76px; resize: vertical; }
+.err { color: var(--bad); font-size: 0.95rem; min-height: 1.4em; margin: 6px 0 0; }
+.ending-emoji { font-size: 3.2rem; line-height: 1; margin-bottom: 6px; }
+.ending.tier0 { border-top: 6px solid var(--bad); }
+.ending.tier1 { border-top: 6px solid var(--rep); }
+.ending.tier2 { border-top: 6px solid var(--cash); }
+.new-end { display: inline-block; font-weight: 700; font-size: 0.9rem; color: var(--berry); border: 2px solid var(--berry); border-radius: 999px; padding: 1px 10px; margin: 0 0 8px; }
+.lb-t { font-weight: 700; margin: 18px 0 8px; }
+.lb-t span, .etier span { font-weight: 400; color: var(--muted); }
+.lb { display: grid; gap: 1px; padding: 8px 12px; border-radius: 10px; margin-bottom: 8px; background: var(--bg); border-left: 4px solid var(--cash); }
+.lb.bad { border-left-color: var(--bad); }
+.lb-k { font-size: 0.85rem; color: var(--muted); }
+.lb-d { font-size: 0.92rem; }
+.emap { display: grid; gap: 6px; margin-bottom: 4px; }
+.erow { display: grid; grid-template-columns: 88px repeat(3, 1fr); gap: 6px; align-items: stretch; }
+.etier { font-size: 0.82rem; font-weight: 700; align-self: center; line-height: 1.2; }
+.etier span { display: block; font-size: 0.75rem; }
+.ecell { border: 2px solid var(--line); border-radius: 10px; padding: 6px 4px; text-align: center; background: var(--panel); display: grid; gap: 2px; }
+.ecell .ee { font-size: 1.35rem; line-height: 1; }
+.ecell .en { font-size: 0.72rem; line-height: 1.15; }
+.ecell.unk { color: var(--muted); border-style: dashed; background: transparent; }
+.ecell.cur { border-color: var(--berry); background: var(--cream); box-shadow: 0 0 0 2px var(--berry); }
+.history { list-style: none; padding: 0; margin: 0; }
+.history li { padding: 10px 0; border-top: 1px solid var(--line); }
+.history li:first-child { border-top: 0; padding-top: 0; }
+.history .you { font-weight: 700; }
+.history .other { color: var(--muted); font-size: 0.95rem; }
+.model { background: var(--cream); border-radius: 10px; padding: 10px 12px; margin: 8px 0 14px; }
+.sent { margin-bottom: 14px; }
+.fb { font-size: 0.95rem; margin-top: 4px; min-height: 1.4em; }
+.fb.ok { color: var(--cash); } .fb.no { color: var(--bad); }
+
+.help-btn {
+  display: block; text-align: left; margin-top: 4px; background: none; border: 0; padding: 4px 0; cursor: pointer;
+  color: var(--berry); font-weight: 700; font-size: 0.98rem; text-decoration: underline; text-underline-offset: 3px;
+}
+.help-btn span, .step-t span, .grp span { font-weight: 400; color: var(--muted); }
+.builder { margin-top: 8px; padding: 12px; border: 2px solid var(--line); border-radius: 12px; background: var(--bg); }
+.step-t { font-weight: 700; margin: 10px 0 6px; }
+.step-t:first-child { margin-top: 0; }
+.grp { font-size: 0.9rem; margin: 10px 0 4px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  cursor: pointer; text-align: left; padding: 6px 10px; border-radius: 10px;
+  border: 2px solid var(--line); background: var(--panel); color: var(--ink); line-height: 1.25;
+}
+.chip b { display: block; font-size: 0.98rem; }
+.chip span { display: block; font-size: 0.8rem; color: var(--muted); }
+.chip.on { border-color: var(--berry); background: var(--cream); }
+.chip:focus-visible, .help-btn:focus-visible { outline: 3px solid var(--rep); outline-offset: 2px; }
+.again-hint { text-align: center; margin: 8px 0 0; }
+.resume { font-weight: 700; color: var(--bad); margin: 0 0 10px; padding: 8px 10px; border: 2px solid var(--bad); border-radius: 10px; }
+.kw-g { font-weight: 700; margin: 14px 0 6px; }
+.kw-g span { font-weight: 400; color: var(--muted); }
+.kw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.kw { display: flex; gap: 8px; align-items: center; padding: 6px 8px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); }
+.kw-e { font-size: 1.3rem; }
+.kw b { display: block; font-size: 1.02rem; }
+.kw-pt, .kw-past { display: block; font-size: 0.8rem; color: var(--muted); line-height: 1.25; }
+.kw-past { color: var(--berry); }
+.kw-tip { margin-top: 16px; }
+.past .lb-t { margin-top: 0; }
+.past-best { margin: 0 0 10px; }
+.past-best span { color: var(--muted); font-size: 0.92rem; }
+.past-list { list-style: none; padding: 0; margin: 0 0 6px; }
+.past-list li { display: flex; gap: 10px; align-items: center; padding: 8px 0; border-top: 1px solid var(--line); }
+.past-list .pe { font-size: 1.5rem; width: 1.8rem; text-align: center; }
+.past-list .pm { font-size: 0.85rem; color: var(--muted); }
+.tag { font-weight: 400; font-size: 0.78rem; margin-left: 6px; padding: 1px 8px; border-radius: 999px; border: 1px solid var(--rose); color: var(--rose); white-space: nowrap; }
+.own { font-size: 0.92rem; color: var(--muted); margin: 6px 0 0; padding-left: 10px; border-left: 3px solid var(--rep); }
+.help-rule { margin-bottom: 14px; }
+.done { font-weight: 700; color: var(--cash); margin: 12px 0 0; }
+.pv-bar {
+  position: sticky; bottom: env(safe-area-inset-bottom, 0px); margin: 14px -12px -12px; padding: 10px 12px 12px;
+  background: var(--bg); border-top: 2px solid var(--line); border-radius: 0 0 10px 10px;
+}
+.preview { margin: 0 0 10px; padding: 10px 12px; border-radius: 10px; background: var(--cream); font-size: 1.08rem; min-height: 2.6em; }
+.btn[disabled] { opacity: 0.45; cursor: not-allowed; }
+
+@media (prefers-reduced-motion: reduce) {
+  .fill { transition: none; } .delta { animation-duration: 1ms; opacity: 1; }
+}
+@media (max-width: 380px) {
+  body { font-size: 17px; } h1 { font-size: 2rem; } .scene { height: 180px; } .scene svg.avatar { width: 165px; height: 165px; }
+}
+</style>
+</head>
+<body>
+<main class="wrap" id="app" aria-live="polite"></main>
+<div id="tip" role="tooltip"></div>
+
+<script>
+const DECISIONS = __DECISIONS__;
+const IRREG = __IRREG__;   // [infinitive, past, participle, tradução]
+
+/* mapa: forma escrita -> { i: índice do verbo, cols: colunas a destacar } */
+const VERB = new Map();
+(function buildVerbs() {
+  const NO_BASE = new Set(["have", "do"]);          // auxiliares: só o passado ganha glossário
+  const DOUBLE = new Set(["get", "run", "win", "put", "cut", "set", "let", "begin", "sit", "forget"]);
+  const sForm = b => /(s|sh|ch|x|o)$/.test(b) ? b + "es" : /[^aeiou]y$/.test(b) ? b.slice(0, -1) + "ies" : b + "s";
+  const ing = b => (b === "be" || b === "see") ? b + "ing"
+    : DOUBLE.has(b) ? b + b.slice(-1) + "ing"
+    : /ie$/.test(b) ? b.slice(0, -2) + "ying"
+    : /[^e]e$/.test(b) ? b.slice(0, -1) + "ing" : b + "ing";
+  const add = (k, i, col) => {
+    if (!VERB.has(k)) VERB.set(k, { i, cols: [] });
+    if (col !== null && !VERB.get(k).cols.includes(col)) VERB.get(k).cols.push(col);
+  };
+  IRREG.forEach(([b, p, pp], i) => {
+    if (!NO_BASE.has(b)) { add(b, i, 0); if (b !== "be") add(sForm(b), i, 0); add(ing(b), i, null); }
+    p.split(" / ").forEach(f => add(f, i, 1));
+    pp.split(" / ").forEach(f => add(f, i, 2));
+  });
+  const idx = b => IRREG.findIndex(v => v[0] === b);
+  [["didn't", "do"], ["wasn't", "be"], ["weren't", "be"], ["hadn't", "have"]].forEach(([k, b]) => add(k, idx(b), 1));
+})();
+const P = __PARAMS__;   // limites dos 9 finais, calibrados por simulação
+const ROUNDS = 5;
+
+const PEOPLE = {
+  ana:   { name: "Ana",       role: "your CFO (money)" },
+  lee:   { name: "Mr. Lee",   role: "your mentor" },
+  costa: { name: "Ms. Costa", role: "an investor" }
+};
+
+/* ---------------- avatars (SVG) ---------------- */
+function face(mood) {
+  // mouth + brows change with mood: talk | happy | worried
+  const mouth = mood === "happy"   ? '<path d="M84 122 Q95 134 106 122" stroke="#5A2A2A" stroke-width="3.5" fill="none" stroke-linecap="round"/>'
+              : mood === "worried" ? '<path d="M85 128 Q95 120 105 128" stroke="#5A2A2A" stroke-width="3.5" fill="none" stroke-linecap="round"/>'
+              :                      '<ellipse cx="95" cy="125" rx="7" ry="4.5" fill="#5A2A2A"/>';
+  const brows = mood === "worried"
+    ? '<path d="M72 97 L86 91 M118 97 L104 91" stroke="#2A1A14" stroke-width="4.5" stroke-linecap="round"/>'
+    : '<path d="M72 95 Q79 90 87 94 M103 94 Q111 90 118 95" stroke="#2A1A14" stroke-width="4.5" fill="none" stroke-linecap="round"/>';
+  return brows + '<circle cx="80" cy="106" r="4.5" fill="#2B1721"/><circle cx="110" cy="106" r="4.5" fill="#2B1721"/>' + mouth;
+}
+function avatar(who, mood) {
+  const neck = '<rect x="84" y="140" width="22" height="22" fill="SKIN"/>';
+  const head = '<ellipse cx="95" cy="110" rx="34" ry="38" fill="SKIN"/>';
+  let hair = "", body = "", extra = "", skin = "#E8B996";
+  if (who === "ana") {
+    skin = "#E3B08C";
+    body = '<path d="M40 190 Q44 158 95 154 Q146 158 150 190 Z" fill="#6D2E46"/><path d="M83 156 L95 176 L107 156" fill="#F6F0E6"/>';
+    hair = '<circle cx="95" cy="62" r="17" fill="#2B1B16"/><path d="M60 108 Q58 70 95 68 Q132 70 130 108 Q124 84 95 82 Q66 84 60 108 Z" fill="#2B1B16"/>';
+    extra = '<circle cx="80" cy="106" r="11" fill="none" stroke="#2B1721" stroke-width="3"/><circle cx="110" cy="106" r="11" fill="none" stroke="#2B1721" stroke-width="3"/><path d="M91 106 L99 106" stroke="#2B1721" stroke-width="3"/>';
+  } else if (who === "lee") {
+    skin = "#E9C29C";
+    body = '<path d="M40 190 Q44 158 95 154 Q146 158 150 190 Z" fill="#A26769"/><path d="M78 157 L95 190 L112 157" fill="#ECE2D0"/><circle cx="95" cy="172" r="2.5" fill="#6D2E46"/><circle cx="95" cy="182" r="2.5" fill="#6D2E46"/>';
+    hair = '<path d="M62 100 Q60 72 95 70 Q130 72 128 100 Q120 82 95 84 Q70 82 62 100 Z" fill="#B9B3AE"/>';
+    extra = '<path d="M80 118 Q88 111 95 115 Q102 111 110 118 Q102 121 95 118 Q88 121 80 118 Z" fill="#9C958F"/>';
+  } else {
+    skin = "#9A6546";
+    body = '<path d="M40 190 Q44 158 95 154 Q146 158 150 190 Z" fill="#34466B"/><path d="M80 158 Q95 170 110 158" stroke="#F3E9D2" stroke-width="4" fill="none"/>';
+    hair = '<g fill="#1F130F"><circle cx="64" cy="96" r="14"/><circle cx="70" cy="76" r="15"/><circle cx="86" cy="66" r="15"/><circle cx="104" cy="66" r="15"/><circle cx="120" cy="76" r="15"/><circle cx="126" cy="96" r="14"/><circle cx="60" cy="116" r="12"/><circle cx="130" cy="116" r="12"/></g>';
+    extra = '<circle cx="60" cy="122" r="4" fill="#E0AE55"/><circle cx="130" cy="122" r="4" fill="#E0AE55"/>';
+  }
+  const svg = (body + neck + head + hair + face(mood) + extra).replaceAll("SKIN", skin);
+  return `<svg class="avatar" viewBox="0 0 190 190" role="img" aria-label="${PEOPLE[who].name}">${svg}</svg>`;
+}
+const PLANT = '<svg class="plant" width="44" height="70" viewBox="0 0 44 70" aria-hidden="true"><path d="M22 44 C8 36 6 18 14 8 C22 20 22 32 22 44 Z" fill="#6E9A74"/><path d="M22 44 C36 36 38 20 30 10 C22 22 22 32 22 44 Z" fill="#5D8963"/><rect x="10" y="44" width="24" height="24" rx="3" fill="#A26769"/></svg>';
+
+/* ---------------- helpers ---------------- */
+const $ = (sel) => document.querySelector(sel);
+function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+function verbWrap(plain) {
+  // palavras em posições ímpares do split são tokens; o resto é pontuação/espaço
+  return plain.split(/([A-Za-z]+(?:['’][A-Za-z]+)?)/).map((part, i) => {
+    if (i % 2 === 0) return esc(part);
+    const v = VERB.get(part.toLowerCase().replace("’", "'"));
+    return v ? `<button type="button" class="gloss verb" data-v="${v.i}" data-c="${v.cols.join(",")}">${esc(part)}</button>` : esc(part);
+  }).join("");
+}
+function rich(text) {
+  // segmentos: [[palavra|tradução]] (glossário comum), {name} (nome da startup) e texto comum (verbos irregulares)
+  return text.split(/(\[\[[^\]]+\]\]|\{name\})/).map(seg => {
+    const g = seg.match(/^\[\[([^|\]]+)\|([^\]]+)\]\]$/);
+    if (g) return `<button type="button" class="gloss" data-pt="${esc(g[2])}">${esc(g[1])}</button>`;
+    if (seg === "{name}") return `<b>${esc(state.name)}</b>`;
+    return verbWrap(seg);
+  }).join("");
+}
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+const clamp = (v) => Math.max(0, Math.min(100, v));
+
+/* ---------------- state ---------------- */
+let state = { name: "", deck: [], idx: 0, cash: 50, rep: 50, history: [], ended: null };
+
+function newGame(keepName) {
+  const name = keepName ? state.name : "";
+  state = { name, deck: shuffle(DECISIONS).slice(0, ROUNDS), idx: 0, cash: 50, rep: 50, history: [], ended: null };
+}
+
+function outcome() {
+  const c = state.cash, r = state.rep;
+  if (c <= 0) return "bankrupt";
+  if (r < P.R0) return "users_left";
+  if (c < P.C0) return "sold";
+  if (r >= P.R2 && c >= P.C3) return "unicorn";
+  if (r >= P.R1 && c >= P.C2) return "tookoff";
+  if (r >= P.R1) return "rising";
+  if (c >= P.C4) return "money";
+  if (c < P.C5 || r < P.R3) return "thread";
+  return "stuck";
+}
+
+/* ---------------- screens ---------------- */
+function gaugesHTML() {
+  return `<div class="gauges">
+    <div class="gauge cash" id="g-cash"><div class="g-row"><span>💰 Cash</span><b id="v-cash">${state.cash}</b></div><div class="track"><div class="fill" id="f-cash" style="width:${state.cash}%"></div></div></div>
+    <div class="gauge rep" id="g-rep"><div class="g-row"><span>⭐ Reputation</span><b id="v-rep">${state.rep}</b></div><div class="track"><div class="fill" id="f-rep" style="width:${state.rep}%"></div></div></div>
+  </div>`;
+}
+function topHTML(stepText) {
+  return `<div class="top"><div class="brand">${esc(state.name)}</div><div class="step">${stepText}</div></div>`;
+}
+function sceneHTML(who, mood) {
+  return `<div class="scene"><div class="window"></div>${PLANT}${avatar(who, mood)}</div>`;
+}
+
+function screenStart() {
+  $("#app").innerHTML = `
+    <div class="card">
+      <h1>The CEO Game</h1>
+      <p>You are the CEO of a new startup. Your team will ask you to make ${ROUNDS} big decisions. Listen to their advice, and choose carefully.</p>
+      <p class="hint">Toque nas palavras sublinhadas para ver a tradução. Nos verbos irregulares (sublinhado tracejado), você vê também as três formas: infinitive, past e participle.</p>
+      <label class="lbl" for="nm">What's the name of your startup?</label>
+      <input type="text" id="nm" maxlength="28" autocomplete="off" placeholder="e.g. FoodBox" value="${esc(state.name)}">
+      <p class="err" id="nm-err"></p>
+      <button class="btn center" id="go">Start the game</button>
+    </div>` + historyHTML();
+  const go = () => {
+    const v = $("#nm").value.trim();
+    if (!v) { $("#nm-err").textContent = "Type a name for your startup to start."; $("#nm").focus(); return; }
+    state.name = v; newGame(true); screenVocab();
+  };
+  $("#go").onclick = go;
+  $("#nm").addEventListener("keydown", e => { if (e.key === "Enter") go(); });
+  const clr = $("#clear");
+  if (clr) {
+    let armed = null;
+    clr.onclick = () => {
+      if (armed) { clearTimeout(armed); clearAll(); screenStart(); return; }
+      clr.innerHTML = "Tap again to delete <span>· toque de novo para apagar</span>";
+      armed = setTimeout(() => { armed = null; clr.innerHTML = "Clear my history <span>· apagar meu histórico</span>"; }, 4000);
+    };
+  }
+}
+
+/* ---------------- palavras-chave antes de começar ---------------- */
+const KEY_WORDS = [
+  ["The game", "o jogo", [["👩‍💼", "CEO", "presidente da empresa"], ["🚀", "startup", "empresa nova"], ["💰", "cash", "dinheiro em caixa"], ["⭐", "reputation", "reputação"]]],
+  ["People", "pessoas", [["📱", "users", "usuários"], ["👥", "team", "equipe"], ["💼", "investor", "investidor(a)"]]],
+  ["Money", "dinheiro", [["🏷️", "price", "preço"], ["💳", "pay", "pagar"], ["📈", "earn", "ganhar (dinheiro)"], ["🐷", "save", "economizar, guardar"], ["💸", "expensive", "caro"]]],
+  ["Actions", "ações", [["🤝", "hire", "contratar"], ["🌱", "grow", "crescer"], ["🔒", "keep", "manter"]]]
+];
+
+function screenVocab() {
+  const past = w => { const v = IRREG.find(x => x[0] === w); return v ? `<span class="kw-past">past: ${esc(v[1])}</span>` : ""; };
+  $("#app").innerHTML = topHTML("Before you start") + `
+    <div class="card">
+      <h2>Key words</h2>
+      <p class="hint">Palavras importantes do jogo. Leia antes de começar.</p>
+      ${KEY_WORDS.map(([g, gpt, words]) => `
+        <p class="kw-g">${g} <span>· ${gpt}</span></p>
+        <div class="kw-grid">${words.map(([e, en, pt]) => `
+          <div class="kw"><span class="kw-e" aria-hidden="true">${e}</span><div><b>${en}</b><span class="kw-pt">${pt}</span>${past(en)}</div></div>`).join("")}
+        </div>`).join("")}
+      <div class="model kw-tip">
+        Your team will warn you like this:<br>
+        <b>If</b> you hire five engineers, we <b>will</b> spend all our money.<br>
+        <span class="hint">If + presente, will + verbo: First Conditional.</span>
+      </div>
+      <div class="choices"><button class="btn center" id="next">I'm ready</button></div>
+    </div>`;
+  $("#next").onclick = screenIntro;
+  window.scrollTo(0, 0);
+}
+
+function screenIntro() {
+  $("#app").innerHTML = topHTML("Welcome") + gaugesHTML() + sceneHTML("lee", "happy") + `
+    <div class="box">
+      <div class="who"><span class="who-name">Mr. Lee</span><span class="who-role">your mentor</span></div>
+      <p class="line">${rich("Welcome, CEO of {name}! You have some money and some fans. Watch the two bars: 💰 Cash and ⭐ Reputation. If one of them gets too low, your company will be in trouble. Good luck!")}</p>
+      <div class="choices"><button class="btn center" id="next">Meet your team</button></div>
+    </div>`;
+  $("#next").onclick = screenDecision;
+  $("#next").focus();
+}
+
+function screenDecision() {
+  const d = state.deck[state.idx];
+  const p = PEOPLE[d.who];
+  const order = shuffle(["a", "b"]);   // posição dos botões muda a cada decisão
+  $("#app").innerHTML = topHTML(`Decision ${state.idx + 1} of ${ROUNDS}`) + gaugesHTML() + sceneHTML(d.who, "talk") + `
+    <div class="box">
+      <div class="who"><span class="who-name">${p.name}</span><span class="who-role">${p.role}</span></div>
+      <p class="line">${rich(d.text)}</p>
+      <div class="choices">
+        ${order.map(k => `<button class="btn alt" data-k="${k}">${esc(d[k].label)}</button>`).join("")}
+      </div>
+    </div>`;
+  document.querySelectorAll(".choices .btn").forEach(b => b.onclick = () => choose(b.dataset.k));
+}
+
+function choose(k) {
+  const d = state.deck[state.idx];
+  const opt = d[k], other = d[k === "a" ? "b" : "a"];
+  const before = { cash: state.cash, rep: state.rep };
+  state.cash = clamp(state.cash + opt.cash);
+  state.rep = clamp(state.rep + opt.rep);
+  state.history.push({ chose: opt.label, other: other.label, choseP: [opt.phrase, opt.phrasePt], otherP: [other.phrase, other.phrasePt],
+                       dc: state.cash - before.cash, dr: state.rep - before.rep });
+  const net = (state.cash - before.cash) + (state.rep - before.rep);
+  const broke = state.cash <= 0;
+  const last = state.idx === ROUNDS - 1;
+
+  const btnText = broke ? "See what happened" : last ? "See the final result" : "Next decision";
+  $("#app").innerHTML = topHTML(`Decision ${state.idx + 1} of ${ROUNDS}`) + gaugesHTML() + sceneHTML(d.who, net >= 0 ? "happy" : "worried") + `
+    <div class="box">
+      <div class="who"><span class="who-name">What happened</span><span class="who-role">you chose: ${esc(opt.label)}</span></div>
+      <p class="line">${rich(opt.result)}</p>
+      ${broke ? `<p class="line"><b>${esc(state.name)} has no money left.</b></p>` : ""}
+      <div class="choices"><button class="btn center" id="next">${btnText}</button></div>
+    </div>`;
+  // animação dos medidores: começa no valor antigo e anda até o novo
+  animateGauge("cash", before.cash, state.cash);
+  animateGauge("rep", before.rep, state.rep);
+  $("#next").onclick = () => {
+    if (broke || last) { state.ended = outcome(); screenEnding(); }
+    else { state.idx++; screenDecision(); }
+  };
+}
+
+function animateGauge(key, from, to) {
+  const f = $("#f-" + key), v = $("#v-" + key), g = $("#g-" + key);
+  f.style.width = from + "%"; v.textContent = from;
+  requestAnimationFrame(() => requestAnimationFrame(() => { f.style.width = to + "%"; v.textContent = to; }));
+  const diff = to - from;
+  if (diff !== 0) {
+    const chip = document.createElement("span");
+    chip.className = "delta " + (diff > 0 ? "up" : "down");
+    chip.textContent = (diff > 0 ? "+" : "−") + Math.abs(diff);
+    g.appendChild(chip);
+  }
+}
+
+/* ---------------- montador de frases (Help me write) ---------------- */
+const CONDS = [
+  ["If I were the CEO again", "Se eu fosse o CEO de novo"],
+  ["If I had more money", "Se eu tivesse mais dinheiro"],
+  ["If I had more time", "Se eu tivesse mais tempo"],
+  ["If I knew what I know now", "Se eu soubesse o que sei agora"],
+  ["If I were braver", "Se eu fosse mais corajoso(a)"],
+  ["If I were more careful", "Se eu fosse mais cuidadoso(a)"]
+];
+const IDEAS = [
+  ["listen to my team more", "ouvir mais a minha equipe"],
+  ["save more money", "guardar mais dinheiro"],
+  ["spend less money", "gastar menos dinheiro"],
+  ["take more risks", "correr mais riscos"],
+  ["think more carefully", "pensar com mais cuidado"],
+  ["ask for more advice", "pedir mais conselhos"]
+];
+
+const ENDINGS = {
+  bankrupt:   { tier: 0, emoji: "💥", short: "Bankrupt", title: "Bankrupt.",
+    text: "{name} [[ran out of money|ficou sem dinheiro]] before the end of the year. The office closed, and the team had to find new jobs. Don't give up: many famous CEOs failed before they succeeded." },
+  users_left: { tier: 0, emoji: "📉", short: "Everybody left", title: "Everybody left.",
+    text: "{name} still has some money, but nobody wants to use the app anymore. Without users, the company had to close." },
+  sold:       { tier: 0, emoji: "🏷️", short: "Sold cheap", title: "Sold for almost nothing.",
+    text: "{name} was almost out of money, so a big company bought it for very little. Your app is still alive, but it is not yours anymore." },
+  thread:     { tier: 1, emoji: "🆘", short: "By a thread", title: "[[Hanging by a thread|por um fio]].",
+    text: "{name} is still open, but it has serious problems: money is short, or users are unhappy. One more bad decision, and the company will close." },
+  stuck:      { tier: 1, emoji: "😐", short: "Stuck", title: "Your startup survived, but it stopped growing.",
+    text: "{name} is still open, but it is not growing. You need new ideas to make it take off." },
+  money:      { tier: 1, emoji: "💰", short: "Money machine", title: "A money machine.",
+    text: "{name} makes a lot of money, but people don't love your brand. Your investors are happy. Your users... not so much." },
+  rising:     { tier: 2, emoji: "🌱", short: "Rising star", title: "A [[rising star|estrela em ascensão]].",
+    text: "Everybody is talking about {name}! Users love your app, but money is tight. If you find a good investor, you will grow very fast." },
+  tookoff:    { tier: 2, emoji: "🚀", short: "Took off", title: "Your startup took off!",
+    text: "{name} has thousands of happy users and money in the bank. Investors call you every day. Great job, CEO!" },
+  unicorn:    { tier: 2, emoji: "🦄", short: "Unicorn", title: "A unicorn!",
+    text: "{name} is now [[worth|que vale]] one [[billion|bilhão]] dollars. Startups like this are called [[unicorns|unicórnios]], because they are very rare. You are one of the best CEOs in the country!" }
+};
+const TIERS = [["Failure", "fracasso"], ["Middle", "meio-termo"], ["Success", "sucesso"]];
+const ENDING_ORDER = ["bankrupt", "users_left", "sold", "thread", "stuck", "money", "rising", "tookoff", "unicorn"];
+
+/* finais já descobertos neste aparelho (conveniência local; se o navegador bloquear, o jogo segue normal) */
+function loadFound() { try { return new Set(JSON.parse(localStorage.getItem("ceo-game-endings") || "[]")); } catch (e) { return new Set(); } }
+function saveFound(s) { try { localStorage.setItem("ceo-game-endings", JSON.stringify([...s])); } catch (e) { /* sem armazenamento */ } }
+
+/* histórico de partidas neste aparelho (as 20 mais recentes; a tela mostra 5) */
+function loadGames() { try { return JSON.parse(localStorage.getItem("ceo-game-history") || "[]"); } catch (e) { return []; } }
+function saveGame(g) { try { localStorage.setItem("ceo-game-history", JSON.stringify([g, ...loadGames()].slice(0, 20))); } catch (e) { /* sem armazenamento */ } }
+function clearAll() { try { localStorage.removeItem("ceo-game-history"); localStorage.removeItem("ceo-game-endings"); } catch (e) { /* sem armazenamento */ } }
+
+function historyHTML() {
+  const games = loadGames();
+  if (!games.length) return "";
+  const when = ms => { const d = new Date(ms);
+    return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }) + " " + d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }); };
+  const best = games.reduce((a, g) => ENDING_ORDER.indexOf(g.ending) > ENDING_ORDER.indexOf(a.ending) ? g : a);
+  return `<div class="card past">
+    <p class="lb-t">Your last games <span>· suas últimas partidas</span></p>
+    <p class="past-best">Best result: ${ENDINGS[best.ending].emoji} <b>${ENDINGS[best.ending].short}</b> <span>· ${games.length} ${games.length === 1 ? "game" : "games"} played</span></p>
+    <ul class="past-list">${games.slice(0, 5).map(g => `
+      <li><span class="pe" aria-hidden="true">${ENDINGS[g.ending].emoji}</span>
+        <div><b>${esc(g.name)}</b> · ${ENDINGS[g.ending].short}<div class="pm">💰 ${g.cash}  ⭐ ${g.rep} · ${when(g.t)}</div></div></li>`).join("")}
+    </ul>
+    <button type="button" class="help-btn" id="clear">Clear my history <span>· apagar meu histórico</span></button>
+  </div>`;
+}
+
+/* partida que terminou mas ainda não teve as 3 frases conferidas */
+function savePending() { try { localStorage.setItem("ceo-game-pending", JSON.stringify({ name: state.name, history: state.history, ended: state.ended, cash: state.cash, rep: state.rep })); } catch (e) { /* sem armazenamento */ } }
+function loadPending() { try { return JSON.parse(localStorage.getItem("ceo-game-pending") || "null"); } catch (e) { return null; } }
+function clearPending() { try { localStorage.removeItem("ceo-game-pending"); } catch (e) { /* sem armazenamento */ } }
+
+function fmtDelta(h) {
+  const part = (v, icon) => v ? `${v > 0 ? "+" : "−"}${Math.abs(v)} ${icon}` : "";
+  return [part(h.dc, "💰"), part(h.dr, "⭐")].filter(Boolean).join("  ") || "no change";
+}
+
+function lookingBack() {
+  const hs = state.history, k = state.ended;
+  if (!hs.length) return "";
+  // o medidor que afundou (ou sustentou) esta empresa decide o que conta como erro
+  const focus = ["bankrupt", "sold", "rising"].includes(k) ? "cash"
+              : ["users_left", "money"].includes(k) ? "rep"
+              : k === "thread" ? (state.cash < P.C5 ? "cash" : "rep")
+              : "both";
+  const m = h => focus === "cash" ? h.dc : focus === "rep" ? h.dr : h.dc + h.dr;
+  let wi = 0; hs.forEach((h, i) => { if (m(h) < m(hs[wi])) wi = i; });
+  // "melhor decisão" nunca pode ter custado caro em algum medidor
+  let bi = -1; hs.forEach((h, i) => { if (i !== wi && Math.min(h.dc, h.dr) > -15 && (bi < 0 || m(h) > m(hs[bi]))) bi = i; });
+  let html = "";
+  if (bi >= 0 && m(hs[bi]) > 0)
+    html += `<div class="lb good"><span class="lb-k">Your best decision</span><b>${verbWrap(hs[bi].chose)}</b><span class="lb-d">${fmtDelta(hs[bi])}</span></div>`;
+  if (m(hs[wi]) < 0)
+    html += `<div class="lb bad"><span class="lb-k">Your most expensive mistake</span><b>${verbWrap(hs[wi].chose)}</b><span class="lb-d">${fmtDelta(hs[wi])}</span></div>`;
+  return html ? `<p class="lb-t">Looking back <span>· olhando para trás</span></p>` + html : "";
+}
+
+function endingMap(current, found) {
+  return `<p class="lb-t">Endings discovered: ${found.size} of ${ENDING_ORDER.length} <span>· finais descobertos</span></p>
+    <div class="emap">${TIERS.map(([en, pt], tier) => `
+      <div class="erow"><div class="etier">${en}<span>${pt}</span></div>
+        ${ENDING_ORDER.filter(k => ENDINGS[k].tier === tier).map(k => {
+          const known = found.has(k), cur = k === current;
+          return `<div class="ecell${cur ? " cur" : ""}${known ? "" : " unk"}"><span class="ee">${known ? ENDINGS[k].emoji : "?"}</span><span class="en">${known ? ENDINGS[k].short : "???"}</span></div>`;
+        }).join("")}
+      </div>`).join("")}</div>`;
+}
+
+function screenEnding() {
+  const k = state.ended, e = ENDINGS[k];
+  const found = loadFound(); const isNew = !found.has(k); found.add(k); saveFound(found);
+  if (!state.saved) { saveGame({ name: state.name, ending: k, cash: state.cash, rep: state.rep, t: Date.now() }); state.saved = true; }
+  savePending();
+  $("#app").innerHTML = topHTML("The end") + gaugesHTML() + `
+    <div class="card ending tier${e.tier}">
+      <div class="ending-emoji" aria-hidden="true">${e.emoji}</div>
+      ${isNew && found.size > 1 ? '<p class="new-end">New ending! · Final novo!</p>' : ""}
+      <h2>${rich(e.title)}</h2>
+      <p>${rich(e.text)}</p>
+      ${lookingBack()}
+      ${endingMap(k, found)}
+      <div class="choices"><button class="btn center" id="next">Think about your decisions</button></div>
+    </div>`;
+  $("#next").onclick = screenReflect;
+  $("#next").focus();
+}
+
+function screenReflect() {
+  const items = state.history.map((h, i) => `<li><div class="you">${i + 1}. You ${verbWrap("chose")}: ${verbWrap(h.chose)}</div><div class="other">The other option ${verbWrap("was")}: ${verbWrap(h.other)}</div></li>`).join("");
+  const vb = w => verbWrap(w).replace(/>([^<]+)</, "><b>$1</b><");
+  $("#app").innerHTML = topHTML("Your turn") + `
+    <div class="card">
+      ${state.resumed ? '<p class="resume">Você ainda precisa terminar as frases da sua última partida. · Finish your sentences first.</p>' : ""}
+      <h2>If you were the CEO again, what would you do?</h2>
+      <p>Look at your decisions. Then write <b>three sentences</b> with the <b>second conditional</b>.</p>
+      <div class="model">If I ${vb("were")} the CEO again, I <b>would</b> test the app for one more month.<br>If I ${vb("had")} more money, I <b>would</b> hire five engineers.</div>
+      <ul class="history">${items}</ul>
+    </div>
+    <div class="card">
+      <p class="hint help-rule">Você pode usar o <b>Help me write</b> em até 2 frases. Pelo menos 1 frase precisa ser escrita por você.</p>
+      ${[1, 2, 3].map(n => `<div class="sent"><label class="lbl" for="s${n}">Sentence ${n} <span class="tag" id="tag${n}" hidden>montada com ajuda</span></label><textarea id="s${n}" placeholder="If I..., I would..."></textarea><div class="fb" id="fb${n}"></div><button type="button" class="help-btn" data-n="${n}" aria-expanded="false">Help me write <span>· monte a frase com ajuda</span></button><p class="own" id="own${n}" hidden>Esta frase é sua: escreva sem o montador. Use o modelo lá em cima e as palavras das suas outras frases.</p><div class="builder" id="b${n}" hidden></div></div>`).join("")}
+      <button class="btn center" id="check">Check my sentences</button>
+      <p class="done" id="done" hidden></p>
+      <p class="hint" style="margin-top:12px">When your three sentences are OK, copy them into your notebook and show them to your teacher.</p>
+    </div>
+    <button class="btn alt center" id="again" disabled>Play again with new decisions</button>
+    <p class="hint again-hint" id="again-hint">🔒 Para jogar de novo, escreva as 3 frases e toque em <b>Check my sentences</b>. · Write and check your 3 sentences to play again.</p>`;
+  $("#check").onclick = () => {
+    const oks = [1, 2, 3].map(n => {
+      const r = checkSentence($("#s" + n).value);
+      const fb = $("#fb" + n); fb.textContent = r.msg; fb.className = "fb " + (r.ok ? "ok" : "no");
+      return r.ok;
+    });
+    const done = $("#done");
+    lockAgain(!oks.every(Boolean));
+    if (oks.every(Boolean)) {
+      const own = 3 - helped.size;
+      done.textContent = `All three sentences are OK! Copy them into your notebook. (${helped.size} com ajuda, ${own} ${own === 1 ? "escrita" : "escritas"} por você)`;
+      done.hidden = false;
+    } else done.hidden = true;
+  };
+  $("#again").onclick = () => { if ($("#again").disabled) return; newGame(true); screenStart(); };
+  document.querySelectorAll(".help-btn").forEach(btn => btn.onclick = () => openBuilder(+btn.dataset.n));
+  helped = new Set(); build = null;
+  [1, 2, 3].forEach(n => $("#s" + n).addEventListener("input", () => {
+    // só apagar o campo inteiro devolve a ajuda; editar uma frase montada não conta como "escrita por você"
+    if ($("#s" + n).value.trim() === "" && helped.delete(n)) updateHelpUI();
+    $("#done").hidden = true;
+    lockAgain(true);   // mudou uma frase: precisa conferir de novo
+  }));
+  updateHelpUI();
+  window.scrollTo(0, 0);
+}
+
+function lockAgain(locked) {
+  const btn = $("#again"); if (!btn) return;
+  btn.disabled = locked;
+  $("#again-hint").hidden = !locked;
+  if (!locked) { clearPending(); state.resumed = false; }
+}
+
+let build = null;   // { n, cond, neg, act }
+let helped = new Set();   // frases preenchidas com o montador (máximo 2)
+const MAX_HELP = 2;
+
+function updateHelpUI() {
+  [1, 2, 3].forEach(n => {
+    const mine = helped.has(n), blocked = !mine && helped.size >= MAX_HELP;
+    $("#tag" + n).hidden = !mine;
+    $(`.help-btn[data-n="${n}"]`).hidden = blocked;
+    $("#own" + n).hidden = !blocked;
+    if (blocked && build && build.n === n) openBuilder(n);   // fecha, se estiver aberto
+  });
+}
+
+function openBuilder(n) {
+  if (!helped.has(n) && helped.size >= MAX_HELP && !(build && build.n === n)) return;
+  // só um montador aberto por vez
+  document.querySelectorAll(".builder").forEach(el => { el.hidden = true; el.innerHTML = ""; });
+  document.querySelectorAll(".help-btn").forEach(b => b.setAttribute("aria-expanded", "false"));
+  if (build && build.n === n) { build = null; return; }
+  build = { n, cond: null, neg: false, act: null };
+  $(`.help-btn[data-n="${n}"]`).setAttribute("aria-expanded", "true");
+  renderBuilder();
+}
+
+function chip(group, value, en, pt, on) {
+  return `<button type="button" class="chip${on ? " on" : ""}" aria-pressed="${on}" data-g="${group}" data-v="${esc(value)}"><b>${esc(en)}</b><span>${esc(pt)}</span></button>`;
+}
+
+function renderBuilder() {
+  const box = $("#b" + build.n);
+  const other = state.history.map(h => h.otherP), mine = state.history.map(h => h.choseP);
+  // com "wouldn't", as próprias decisões do aluno vêm primeiro (o que ele NÃO faria de novo)
+  const groups = build.neg
+    ? [["Your decisions", "suas decisões", mine], ["The other options in your game", "as outras opções do seu jogo", other], ["Other ideas", "outras ideias", IDEAS]]
+    : [["The other options in your game", "as outras opções do seu jogo", other], ["Your decisions", "suas decisões", mine], ["Other ideas", "outras ideias", IDEAS]];
+  const sentence = buildSentence();
+  box.innerHTML = `
+    <p class="step-t">1. Start with <span>· comece com</span></p>
+    <div class="chips">${CONDS.map(([en, pt]) => chip("cond", en, en + ",", pt, build.cond === en)).join("")}</div>
+    <p class="step-t">2. Would or wouldn't? <span>· faria ou não faria?</span></p>
+    <div class="chips">${chip("neg", "0", "I would", "eu faria", !build.neg)}${chip("neg", "1", "I wouldn't", "eu não faria", build.neg)}</div>
+    <p class="step-t">3. What would you do? <span>· o que você faria?</span></p>
+    ${groups.map(([t, tpt, list]) => `<p class="grp">${t} <span>· ${tpt}</span></p><div class="chips">${list.map(([en, pt]) => chip("act", en, en, pt, build.act === en)).join("")}</div>`).join("")}
+    <div class="pv-bar">
+      <div class="preview">${sentence ? verbWrap(sentence) : '<span class="hint">Choose one option in each step. · Escolha uma opção em cada passo.</span>'}</div>
+      <button type="button" class="btn center" id="use" ${sentence ? "" : "disabled"}>Use this sentence</button>
+    </div>`;
+  box.hidden = false;
+  box.querySelectorAll(".chip").forEach(c => c.onclick = () => {
+    const g = c.dataset.g, v = c.dataset.v;
+    if (g === "cond") build.cond = v;
+    if (g === "neg") build.neg = v === "1";
+    if (g === "act") build.act = v;
+    const y = box.getBoundingClientRect().top;
+    renderBuilder();
+    window.scrollBy(0, box.getBoundingClientRect().top - y);   // a tela não pula quando a lista reordena
+  });
+  $("#use").onclick = () => {
+    const ta = $("#s" + build.n); ta.value = sentence;
+    helped.add(build.n); $("#done").hidden = true;
+    const r = checkSentence(sentence), fb = $("#fb" + build.n);
+    fb.textContent = r.msg; fb.className = "fb " + (r.ok ? "ok" : "no");
+    const n = build.n; openBuilder(n);   // fecha o montador
+    updateHelpUI();
+    ta.focus();
+  };
+}
+
+function buildSentence() {
+  if (!build || !build.cond || !build.act) return "";
+  return `${build.cond}, I ${build.neg ? "wouldn't" : "would"} ${build.act}.`;
+}
+
+function checkSentence(s) {
+  const t = s.trim(), low = " " + t.toLowerCase().replace(/[’]/g, "'") + " ";
+  if (t.split(/\s+/).filter(Boolean).length < 5) return { ok: false, msg: "Write a complete sentence (at least 5 words)." };
+  if (!/\bif\b/.test(low)) return { ok: false, msg: "Your sentence needs the word “if”." };
+  if (/\bwill\b|\bwon't\b|\w'll\b/.test(low)) return { ok: false, msg: "Use “would”, not “will”. “Will” is for the first conditional." };
+  if (!/\bwould\b|\bwouldn't\b|\w'd\b/.test(low)) return { ok: false, msg: "Your sentence needs “would” (or 'd)." };
+  if (/\bif (i|he|she|it) was\b/.test(low)) return { ok: true, msg: "Good! Tip: in the second conditional, we usually say “If I were...”." };
+  return { ok: true, msg: "Looks good! Copy it into your notebook." };
+}
+
+/* ---------------- glossary popover ---------------- */
+document.addEventListener("click", (e) => {
+  const tip = $("#tip");
+  const g = e.target.closest(".gloss");
+  if (!g) { tip.classList.remove("on"); return; }
+  if (g.classList.contains("verb")) {
+    const [b, p, pp, pt] = IRREG[+g.dataset.v];
+    const on = g.dataset.c ? g.dataset.c.split(",").map(Number) : [];
+    tip.innerHTML = `<div class="vt">${[["infinitive", b], ["past", p], ["participle", pp]].map(([lab, f], i) =>
+      `<div class="vc${on.includes(i) ? " on" : ""}"><span>${lab}</span><b>${esc(f)}</b></div>`).join("")}</div><div class="vpt">= ${esc(pt)}</div>`;
+  } else {
+    tip.textContent = g.textContent + " = " + g.dataset.pt;
+  }
+  tip.classList.add("on");
+  const r = g.getBoundingClientRect();
+  const left = Math.min(window.scrollX + r.left, window.scrollX + document.documentElement.clientWidth - tip.offsetWidth - 8);
+  tip.style.left = Math.max(8, left) + "px";
+  // abre acima da palavra (sobre a cena, onde não há botões); só abre abaixo se faltar espaço
+  const above = r.top - tip.offsetHeight - 6;
+  tip.style.top = (window.scrollY + (above > 8 ? above : r.bottom + 6)) + "px";
+});
+
+/* ---------------- glossário: só a 1ª ocorrência de cada palavra por tela ---------------- */
+function dedupeGloss() {
+  const seen = new Set();
+  $("#app").querySelectorAll(".gloss").forEach(el => {
+    const key = (el.classList.contains("verb") ? "v:" : "g:") + el.textContent.trim().toLowerCase();
+    if (seen.has(key)) el.replaceWith(...el.childNodes);   // repetida: vira texto comum
+    else seen.add(key);
+  });
+}
+// roda sempre que a tela muda (inclusive quando o montador de frases se redesenha)
+new MutationObserver(dedupeGloss).observe($("#app"), { childList: true, subtree: true });
+
+const pending = loadPending();
+if (pending && Array.isArray(pending.history) && ENDINGS[pending.ended]) {
+  state = { name: pending.name, deck: [], idx: 0, cash: pending.cash, rep: pending.rep, history: pending.history, ended: pending.ended, saved: true, resumed: true };
+  screenReflect();
+} else {
+  screenStart();
+}
+</script>
+</body>
+</html>
