@@ -10,7 +10,7 @@ final, o aluno escreve frases em Second Conditional sobre o que faria diferente
 Feito para o 2º ano de inglês do Ensino Médio Integrado (nível A2/B1).
 Funciona no celular, sem instalar nada, e também sem internet.
 
-**▶ Jogar:** `https://SEU-USUARIO.github.io/the-ceo-game/`
+**▶ Jogar:** `[https://SEU-USUARIO.github.io/the-ceo-game/](https://ritassiru.github.io/the-ceo-game/)`
 *(o link passa a funcionar depois de ativar o GitHub Pages; veja abaixo)*
 
 ---
