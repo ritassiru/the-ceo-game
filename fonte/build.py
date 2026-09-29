@@ -23,7 +23,7 @@ FACES = [
 SEM_A1 = {"a", "an", "the", "i", "you", "it", "is", "are", "am", "to", "and", "of", "in", "on", "at",
           "argentina", "brazil", "costa", "ifal"}
 
-def palavras_sem_a1(D, A1):
+def palavras_sem_a1(D, A1, cognatos):
     """Palavras das falas e resultados que não têm tradução no nível A1."""
     irr = set()
     for b, p, pp, _ in load("irreg.json"):
@@ -32,7 +32,7 @@ def palavras_sem_a1(D, A1):
     irr |= {"didn't", "wasn't", "weren't", "hadn't"}   # o jogo já trata como verbos irregulares
     textos = [d["text"] for d in D] + [d[k]["result"] for d in D for k in "ab"]
     ws = {w.lower() for s in textos for w in re.findall(r"[A-Za-z]+(?:'[A-Za-z]+)?", re.sub(r"\[\[[^\]]+\]\]|\{name\}", " ", s))}
-    return sorted(w for w in ws if w not in A1 and w not in irr and w not in SEM_A1)
+    return sorted(w for w in ws if w not in A1 and w not in irr and w not in SEM_A1 and w not in cognatos)
 
 def main():
     D = load("decisions.json")
@@ -46,10 +46,11 @@ def main():
             for campo in ("label", "cash", "rep", "result", "phrase", "phrasePt"):
                 assert campo in o, f"{d['id']}.{k}: falta o campo '{campo}'"
             assert "[[" not in o["label"], f"{d['id']}.{k}: rótulo de botão não pode ter [[glossário]]"
-    A1 = {k: v for k, v in load("a1.json").items() if not k.startswith("_")}
-    faltam = palavras_sem_a1(D, A1)
+    a1 = load("a1.json")
+    A1 = {k: v for k, v in a1.items() if not k.startswith("_")}
+    faltam = palavras_sem_a1(D, A1, set(a1.get("_cognatos", [])))
     if faltam:
-        print("AVISO: palavras sem tradução no glossário Beginner (A1); acrescente em a1.json:")
+        print("AVISO: palavras sem tradução no glossário Beginner (A1); acrescente em a1.json (ou em _cognatos, se for cognato):")
         print("  " + ", ".join(faltam))
 
     css = "\n".join(

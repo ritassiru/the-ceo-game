@@ -45,8 +45,10 @@ em largura de celular, para conferir.
 - **Glossário Beginner (A1):** toda palavra nova em `text` ou `result` precisa
   estar em `fonte/a1.json` (tradução no sentido do jogo; verbo flexionado como
   `"started": "start|começar"`). O `build.py` avisa quais faltam. Ficam de fora
-  de propósito só as palavras de `SEM_A1` no `build.py` (*a, the, I, you...*) e
-  nomes próprios.
+  de propósito as palavras de `SEM_A1` no `build.py` (*a, the, I, you...*),
+  nomes próprios e os **cognatos verdadeiros** (lista `_cognatos` no
+  `a1.json`: *attention, problem, video...*). Falsos cognatos (*legal,
+  parents, succeeded, regular*) **ficam** com tradução.
 - `label` (texto do botão): nunca com `[[...]]`. No nível Beginner, o botão
   mostra o `phrasePt` embaixo, em letra pequena.
 - `phrase`: a ação em inglês, forma base, começando com minúscula, sem
