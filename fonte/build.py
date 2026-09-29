@@ -19,6 +19,21 @@ FACES = [
     ("Atkinson Hyperlegible", 700, "normal", "atkinson-hyperlegible-latin-700-normal.woff2"),
 ]
 
+# palavras que o glossário Beginner não traduz de propósito: básicas demais ou nomes próprios
+SEM_A1 = {"a", "an", "the", "i", "you", "it", "is", "are", "am", "to", "and", "of", "in", "on", "at",
+          "argentina", "brazil", "costa", "ifal"}
+
+def palavras_sem_a1(D, A1):
+    """Palavras das falas e resultados que não têm tradução no nível A1."""
+    irr = set()
+    for b, p, pp, _ in load("irreg.json"):
+        irr |= {b, b + "s", b + "es"} | set(p.split(" / ")) | set(pp.split(" / "))
+        irr |= {b + "ing", b[:-1] + "ing", b + b[-1] + "ing", b[:-2] + "ying"}   # formas em -ing
+    irr |= {"didn't", "wasn't", "weren't", "hadn't"}   # o jogo já trata como verbos irregulares
+    textos = [d["text"] for d in D] + [d[k]["result"] for d in D for k in "ab"]
+    ws = {w.lower() for s in textos for w in re.findall(r"[A-Za-z]+(?:'[A-Za-z]+)?", re.sub(r"\[\[[^\]]+\]\]|\{name\}", " ", s))}
+    return sorted(w for w in ws if w not in A1 and w not in irr and w not in SEM_A1)
+
 def main():
     D = load("decisions.json")
     # conferências rápidas nos dados antes de gerar
@@ -31,6 +46,11 @@ def main():
             for campo in ("label", "cash", "rep", "result", "phrase", "phrasePt"):
                 assert campo in o, f"{d['id']}.{k}: falta o campo '{campo}'"
             assert "[[" not in o["label"], f"{d['id']}.{k}: rótulo de botão não pode ter [[glossário]]"
+    A1 = {k: v for k, v in load("a1.json").items() if not k.startswith("_")}
+    faltam = palavras_sem_a1(D, A1)
+    if faltam:
+        print("AVISO: palavras sem tradução no glossário Beginner (A1); acrescente em a1.json:")
+        print("  " + ", ".join(faltam))
 
     css = "\n".join(
         f'@font-face {{ font-family: "{fam}"; font-weight: {w}; font-style: {st}; font-display: swap; '
@@ -42,7 +62,8 @@ def main():
     assert "googleapis" not in t, "não foi possível embutir as fontes"
     html = (t.replace("__DECISIONS__", json.dumps(D, ensure_ascii=False))
              .replace("__IRREG__", json.dumps(load("irreg.json"), ensure_ascii=False))
-             .replace("__PARAMS__", json.dumps(load("endings_params.json"))))
+             .replace("__PARAMS__", json.dumps(load("endings_params.json")))
+             .replace("__A1__", json.dumps(A1, ensure_ascii=False)))
     out = os.path.join(HERE, "..", "index.html")
     open(out, "w", encoding="utf-8").write(html)
     print(f"index.html gerado: {len(D)} decisões, {len(html.encode()) // 1024} KB")

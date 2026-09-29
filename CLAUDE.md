@@ -19,6 +19,7 @@ no escuro, e **sem internet**.
 fonte/template.html       visual e lógica (HTML + CSS + JS num arquivo só)
 fonte/decisions.json      as situações do jogo
 fonte/irreg.json          verbos irregulares do glossário
+fonte/a1.json             glossário do nível Beginner (A1): quase todas as palavras
 fonte/endings_params.json limites dos 9 finais
 fonte/build.py            gera ../index.html com os dados e as fontes embutidas
 fonte/checar.py           confere o balanceamento (usa sim32.py e endings_sim.py)
@@ -41,7 +42,13 @@ em largura de celular, para conferir.
 - **Falsos positivos do glossário de verbos:** se um substantivo tiver a mesma
   forma de um verbo irregular (*costs*, *TV show*), marque-o com `[[...]]`
   para ele não mostrar o balão de verbo.
-- `label` (texto do botão): nunca com `[[...]]`.
+- **Glossário Beginner (A1):** toda palavra nova em `text` ou `result` precisa
+  estar em `fonte/a1.json` (tradução no sentido do jogo; verbo flexionado como
+  `"started": "start|começar"`). O `build.py` avisa quais faltam. Ficam de fora
+  de propósito só as palavras de `SEM_A1` no `build.py` (*a, the, I, you...*) e
+  nomes próprios.
+- `label` (texto do botão): nunca com `[[...]]`. No nível Beginner, o botão
+  mostra o `phrasePt` embaixo, em letra pequena.
 - `phrase`: a ação em inglês, forma base, começando com minúscula, sem
   pronomes soltos (*it*, *her*, *them*), e sem repetir a de outra opção. É
   usada no montador: *If I were the CEO again, I would* + phrase.
@@ -82,7 +89,8 @@ em largura de celular, para conferir.
   o balão abre acima da palavra e não pode cobrir nem bloquear botões.
 - **Engrenagem de configurações** na barra do topo de todas as telas (inclusive
   a inicial). Abre um painel por cima do jogo, sem mexer na partida, com:
-  glossário on/off, cores (auto/claro/escuro), tamanho do texto
+  glossário em três níveis (Normal = só as palavras difíceis; Beginner = A1,
+  quase todas as palavras + tradução nos botões; Off), cores (auto/claro/escuro), tamanho do texto
   (normal/grande/maior ainda) e animações on/off. Cada opção fica no aparelho
   (`ceo-game-gloss`, `-theme`, `-size`, `-motion`). Para acrescentar uma
   opção, edite a lista `SETTINGS` e `applySettings()` no template. Com o

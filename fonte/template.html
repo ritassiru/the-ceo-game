@@ -146,6 +146,11 @@ button { font: inherit; }
 }
 #tip.on { display: block; }
 .gloss.verb { text-decoration-style: dashed; text-decoration-color: var(--berry); }
+/* nível Beginner (A1): sublinhado mais leve, para não pesar o texto */
+.gloss.a1 { text-decoration-thickness: 1.5px; text-decoration-color: var(--muted); }
+:root:not(.gloss-a1) .gloss.a1 { text-decoration: none; cursor: inherit; pointer-events: none; }
+.opt-pt { display: none; font-weight: 400; font-size: 0.85rem; color: var(--muted); margin-top: 2px; }
+.gloss-a1 .opt-pt { display: block; }
 #tip .vt { display: grid; grid-template-columns: repeat(3, auto); gap: 4px 12px; }
 #tip .vc { padding: 2px 6px; border-radius: 6px; border: 2px solid transparent; }
 #tip .vc.on { border-color: var(--rep); }
@@ -257,6 +262,7 @@ textarea { min-height: 76px; resize: vertical; }
 <script>
 const DECISIONS = __DECISIONS__;
 const IRREG = __IRREG__;   // [infinitive, past, participle, tradução]
+const A1 = __A1__;         // glossário Beginner: palavra -> "tradução" ou "forma base|tradução"
 
 /* mapa: forma escrita -> { i: índice do verbo, cols: colunas a destacar } */
 const VERB = new Map();
@@ -332,8 +338,14 @@ function verbWrap(plain) {
   // palavras em posições ímpares do split são tokens; o resto é pontuação/espaço
   return plain.split(/([A-Za-z]+(?:['’][A-Za-z]+)?)/).map((part, i) => {
     if (i % 2 === 0) return esc(part);
-    const v = VERB.get(part.toLowerCase().replace("’", "'"));
-    return v ? `<button type="button" class="gloss verb" data-v="${v.i}" data-c="${v.cols.join(",")}">${esc(part)}</button>` : esc(part);
+    const key = part.toLowerCase().replace("’", "'");
+    const v = VERB.get(key);
+    if (v) return `<button type="button" class="gloss verb" data-v="${v.i}" data-c="${v.cols.join(",")}">${esc(part)}</button>`;
+    // nível Beginner: quase todas as palavras (só aparecem com esse nível ligado)
+    const a = A1[key];
+    if (!a) return esc(part);
+    const [base, pt] = a.includes("|") ? a.split("|") : ["", a];
+    return `<button type="button" class="gloss a1" data-pt="${esc(pt)}"${base ? ` data-base="${esc(base)}"` : ""}>${esc(part)}</button>`;
   }).join("");
 }
 function rich(text) {
@@ -462,7 +474,7 @@ function screenDecision() {
       <div class="who"><span class="who-name">${p.name}</span><span class="who-role">${p.role}</span></div>
       <p class="line">${rich(d.text)}</p>
       <div class="choices">
-        ${order.map(k => `<button class="btn alt" data-k="${k}">${esc(d[k].label)}</button>`).join("")}
+        ${order.map(k => `<button class="btn alt" data-k="${k}">${esc(d[k].label)}<span class="opt-pt">${esc(d[k].phrasePt)}</span></button>`).join("")}
       </div>
     </div>`;
   document.querySelectorAll(".choices .btn").forEach(b => b.onclick = () => choose(b.dataset.k));
@@ -778,8 +790,8 @@ function checkSentence(s) {
 /* ---------------- configurações (engrenagem; guardadas no aparelho) ---------------- */
 const SETTINGS = [
   // [chave, nome, nome em pt, dica, opções: [valor, rótulo, rótulo em pt]]
-  ["gloss", "Glossary", "glossário", "Sublinha as palavras difíceis. Toque nelas para ver a tradução.",
-    [["on", "On", "ligado"], ["off", "Off", "desligado"]]],
+  ["gloss", "Glossary", "glossário", "Toque nas palavras sublinhadas para ver a tradução. No Beginner, quase todas as palavras têm tradução, e os botões também.",
+    [["on", "Normal", "palavras difíceis"], ["a1", "Beginner", "iniciante (A1)"], ["off", "Off", "desligado"]]],
   ["theme", "Colors", "cores", "",
     [["auto", "Auto", "igual ao celular"], ["light", "Light", "claro"], ["dark", "Dark", "escuro"]]],
   ["size", "Text size", "tamanho do texto", "",
@@ -796,8 +808,10 @@ SETTINGS.forEach(([k, , , , opts]) => {
 let glossOn = true;
 function applySettings() {
   const r = document.documentElement;
-  glossOn = SET.gloss === "on";
+  glossOn = SET.gloss !== "off";
   r.classList.toggle("no-gloss", !glossOn);
+  r.classList.toggle("gloss-a1", SET.gloss === "a1");
+  glossTabs();
   if (SET.theme === "auto") r.removeAttribute("data-theme"); else r.dataset.theme = SET.theme;
   if (SET.size === "normal") r.removeAttribute("data-size"); else r.dataset.size = SET.size;
   r.classList.toggle("no-motion", SET.motion === "off");
@@ -864,14 +878,14 @@ document.addEventListener("keydown", (e) => {
 document.addEventListener("click", (e) => {
   const tip = $("#tip");
   const g = e.target.closest(".gloss");
-  if (!g || !glossOn) { tip.classList.remove("on"); return; }
+  if (!g || !glossOn || (g.classList.contains("a1") && SET.gloss !== "a1")) { tip.classList.remove("on"); return; }
   if (g.classList.contains("verb")) {
     const [b, p, pp, pt] = IRREG[+g.dataset.v];
     const on = g.dataset.c ? g.dataset.c.split(",").map(Number) : [];
     tip.innerHTML = `<div class="vt">${[["infinitive", b], ["past", p], ["participle", pp]].map(([lab, f], i) =>
       `<div class="vc${on.includes(i) ? " on" : ""}"><span>${lab}</span><b>${esc(f)}</b></div>`).join("")}</div><div class="vpt">= ${esc(pt)}</div>`;
   } else {
-    tip.textContent = g.textContent + " = " + g.dataset.pt;
+    tip.textContent = g.textContent + (g.dataset.base ? ` (${g.dataset.base})` : "") + " = " + g.dataset.pt;
   }
   tip.classList.add("on");
   const r = g.getBoundingClientRect();
@@ -884,12 +898,22 @@ document.addEventListener("click", (e) => {
 
 /* ---------------- glossário: só a 1ª ocorrência de cada palavra por tela ---------------- */
 function dedupeGloss() {
-  const seen = new Set();
-  $("#app").querySelectorAll(".gloss").forEach(el => {
-    const key = (el.classList.contains("verb") ? "v:" : "g:") + el.textContent.trim().toLowerCase();
-    if (seen.has(key)) el.replaceWith(...el.childNodes);   // repetida: vira texto comum
+  const seen = new Set(), all = [...$("#app").querySelectorAll(".gloss")];
+  const word = el => el.textContent.trim().toLowerCase();
+  // uma palavra do glossário normal nunca perde a vez para a mesma palavra do nível A1
+  const normal = new Set(all.filter(el => !el.classList.contains("a1") && !el.classList.contains("verb")).map(word));
+  all.forEach(el => {
+    const a1 = el.classList.contains("a1");
+    const key = (el.classList.contains("verb") ? "v:" : a1 ? "a:" : "g:") + word(el);
+    if (seen.has(key) || (a1 && normal.has(word(el)))) el.replaceWith(...el.childNodes);   // repetida: vira texto comum
     else seen.add(key);
   });
+  glossTabs();
+}
+// palavras do nível A1 só entram na ordem do Tab quando esse nível está ligado
+function glossTabs() {
+  const on = SET.gloss === "a1";
+  document.querySelectorAll(".gloss.a1").forEach(el => { el.tabIndex = on ? 0 : -1; });
 }
 // roda sempre que a tela muda (inclusive quando o montador de frases se redesenha)
 new MutationObserver(dedupeGloss).observe($("#app"), { childList: true, subtree: true });

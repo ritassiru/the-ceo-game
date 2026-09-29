@@ -33,8 +33,9 @@ Funciona no celular, sem instalar nada, e também sem internet.
   limitado a 2 das 3 frases.
 - **Trava:** só dá para jogar de novo depois de escrever e conferir as 3 frases.
 - **Histórico** das últimas partidas.
-- **Configurações** (ícone de engrenagem, em todas as telas): glossário
-  ligado/desligado, cores (automático, claro ou escuro), tamanho do texto e
+- **Configurações** (ícone de engrenagem, em todas as telas): glossário em três
+  níveis (*Normal*, só as palavras difíceis; *Beginner*, para iniciantes totais
+  (A1), com quase todas as palavras traduzidas e tradução nos botões; *Off*), cores (automático, claro ou escuro), tamanho do texto e
   animações. Ficam guardadas no próprio aparelho.
 
 ## Como usar em aula
@@ -74,6 +75,7 @@ aula/                    plano de aula, slides e atividade
 fonte/
   decisions.json         as 32 situações do jogo
   irreg.json             verbos irregulares do glossário
+  a1.json                glossário do nível Beginner (A1)
   endings_params.json    limites que definem os 9 finais
   template.html          visual e lógica do jogo
   build.py               gera o index.html
@@ -111,6 +113,8 @@ Cada situação em `fonte/decisions.json` segue este modelo:
 - `phrase` e `phrasePt`: a ação, em inglês e em português, usada pelo montador
   de frases (*If I were the CEO again, I would* + `phrase`). Comece com letra
   minúscula e evite pronomes soltos como *it* e *her*.
+- Palavras novas em `text` ou `result` precisam de tradução em
+  `fonte/a1.json` (glossário Beginner). O `build.py` avisa quais faltam.
 
 **Regra de ouro do balanceamento:** as duas opções precisam ter custo e
 benefício. Se uma opção só ganha, ou se as duas só perdem, o jogo fica óbvio ou
