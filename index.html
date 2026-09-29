@@ -65,6 +65,13 @@ p { margin: 0 0 12px; }
 .top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 10px; }
 .brand { font-size: 1.25rem; color: var(--berry); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .step { color: var(--muted); font-size: 0.95rem; white-space: nowrap; }
+.top-r { display: flex; align-items: baseline; gap: 10px; }
+.gtog { font: inherit; font-size: 0.8rem; color: var(--muted); background: none; border: 1.5px solid var(--line); border-radius: 999px; padding: 2px 10px; cursor: pointer; white-space: nowrap; }
+.gtog[aria-pressed="true"] { color: var(--berry); border-color: var(--rose); }
+.gtog u { text-decoration: underline dotted var(--rose); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+.gtog[aria-pressed="false"] u { text-decoration: none; }
+.gtog:focus-visible { outline: 3px solid var(--rep); outline-offset: 2px; }
+.no-gloss .gloss { text-decoration: none; cursor: inherit; pointer-events: none; }
 .gauges { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
 .gauge { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px 10px; position: relative; }
 .g-row { display: flex; justify-content: space-between; align-items: baseline; font-size: 0.95rem; margin-bottom: 6px; }
@@ -351,7 +358,7 @@ function gaugesHTML() {
   </div>`;
 }
 function topHTML(stepText) {
-  return `<div class="top"><div class="brand">${esc(state.name)}</div><div class="step">${stepText}</div></div>`;
+  return `<div class="top"><div class="brand">${esc(state.name)}</div><div class="top-r"><div class="step">${stepText}</div>${glossButton()}</div></div>`;
 }
 function sceneHTML(who, mood) {
   return `<div class="scene"><div class="window"></div>${PLANT}${avatar(who, mood)}</div>`;
@@ -749,11 +756,26 @@ function checkSentence(s) {
   return { ok: true, msg: "Looks good! Copy it into your notebook." };
 }
 
+/* ---------------- glossário: liga/desliga (guardado no aparelho) ---------------- */
+let glossOn = (() => { try { return localStorage.getItem("ceo-game-gloss") !== "off"; } catch (e) { return true; } })();
+const glossButton = () => `<button type="button" class="gtog" id="gtog" aria-pressed="${glossOn}" title="Mostrar ou esconder o glossário · Show or hide the glossary"><u>Aa</u> Glossary: ${glossOn ? "on" : "off"}</button>`;
+function applyGloss() {
+  document.documentElement.classList.toggle("no-gloss", !glossOn);
+  const b = $("#gtog"); if (b) b.outerHTML = glossButton();
+}
+document.addEventListener("click", (e) => {
+  if (!e.target.closest("#gtog")) return;
+  glossOn = !glossOn;
+  try { localStorage.setItem("ceo-game-gloss", glossOn ? "on" : "off"); } catch (err) { /* sem armazenamento */ }
+  applyGloss(); $("#gtog").focus();
+});
+applyGloss();
+
 /* ---------------- glossary popover ---------------- */
 document.addEventListener("click", (e) => {
   const tip = $("#tip");
   const g = e.target.closest(".gloss");
-  if (!g) { tip.classList.remove("on"); return; }
+  if (!g || !glossOn) { tip.classList.remove("on"); return; }
   if (g.classList.contains("verb")) {
     const [b, p, pp, pt] = IRREG[+g.dataset.v];
     const on = g.dataset.c ? g.dataset.c.split(",").map(Number) : [];

@@ -73,6 +73,9 @@ em largura de celular, para conferir.
 - Tela de palavras-chave antes do jogo.
 - Glossário sublinhado só na **primeira ocorrência de cada palavra por tela**;
   o balão abre acima da palavra e não pode cobrir nem bloquear botões.
+- Botão **"Aa Glossary: on/off"** na barra do topo: desligado, some o
+  sublinhado e as palavras não abrem balão. A escolha fica no aparelho
+  (`ceo-game-gloss`). Mesmo botão na `story-shelf`.
 - Tela final: 9 finais, "Looking back" (melhor decisão nunca pode ter custado
   mais de 15 pontos num medidor; o erro mais caro é medido pelo medidor que
   afundou a empresa) e mapa de finais descobertos.
