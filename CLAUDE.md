@@ -98,6 +98,8 @@ em largura de celular, para conferir.
   opção, edite a lista `SETTINGS` e `applySettings()` no template. Com o
   glossário desligado, some o sublinhado e as palavras não abrem balão.
   Tamanhos de fonte em `rem`, para acompanharem a opção de tamanho do texto.
+  O projeto irmão `ritassiru/story-shelf` (pasta vizinha `../story-shelf`) tem
+  o mesmo painel e o mesmo glossário Beginner: mudança em um, avalie no outro.
 - Tela final: 9 finais, "Looking back" (melhor decisão nunca pode ter custado
   mais de 15 pontos num medidor; o erro mais caro é medido pelo medidor que
   afundou a empresa) e mapa de finais descobertos.
