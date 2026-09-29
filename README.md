@@ -36,9 +36,12 @@ Funciona no celular, sem instalar nada, e também sem internet.
 - **My words:** as palavras que o aluno consultou no glossário aparecem no fim
   da partida, para copiar no caderno, e podem ser revisadas em cartões (tela
   inicial). Ficam só no aparelho.
+- **Áudio:** tocar numa palavra sublinhada fala a pronúncia, e o botão
+  🔊 *Listen* lê a fala do conselheiro, com a voz que já vem no celular.
 - **Configurações** (ícone de engrenagem, em todas as telas): glossário em três
   níveis (*Normal*, só as palavras difíceis; *Beginner*, para iniciantes totais
-  (A1), com quase todas as palavras traduzidas e tradução nos botões; *Off*), cores (automático, claro ou escuro), tamanho do texto e
+  (A1), com quase todas as palavras traduzidas e tradução nos botões; *Off*), áudio (normal, devagar ou desligado), cores (automático, claro ou escuro),
+  tamanho do texto e
   animações. Ficam guardadas no próprio aparelho.
 
 ## Instalar no celular e usar sem internet

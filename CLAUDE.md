@@ -126,6 +126,14 @@ em largura de celular, para conferir.
   na tela inicial, e a revisão em cartões abre no mesmo painel das configurações
   (`openSheet`), então não mexe na partida nem na trava do *Play again*. *Not yet* zera o acerto da palavra,
   e ela volta primeiro na próxima revisão. *Clear my words* pede dois toques.
+- **Áudio:** usa a voz em inglês que já vem no aparelho (`speechSynthesis`),
+  nada é baixado nem enviado. Tocar numa palavra do glossário fala a palavra
+  (o balão continua sem receber toques); o botão *🔊 Listen* lê a fala do
+  conselheiro, o resultado e o final, frase
+  por frase, sem emojis. Configuração *Audio*: normal, devagar (0,7) ou
+  desligado (os botões somem). Sem voz em inglês no aparelho, a opção e os
+  botões nem aparecem. No PC de teste do professor o Chrome só tem vozes do
+  Google, que precisam de internet; no Android as vozes costumam ser locais.
 - Tudo que usa `localStorage` fica dentro de `try/catch`: o jogo precisa
   funcionar mesmo se o navegador bloquear o armazenamento.
 - Texto digitado pelo aluno (nome da startup) sempre passa por `esc()`.
