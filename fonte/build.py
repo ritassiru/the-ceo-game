@@ -12,6 +12,7 @@ import base64, hashlib, json, os, re
 HERE = os.path.dirname(os.path.abspath(__file__))
 path = lambda *p: os.path.join(HERE, *p)
 load = lambda f: json.load(open(path(f), encoding="utf-8"))
+URL = "https://ritassiru.github.io/the-ceo-game/"   # endereço publicado (GitHub Pages), usado no QR code
 
 FACES = [
     ("Fraunces", 600, "normal", "fraunces-latin-600-normal.woff2"),
@@ -72,10 +73,16 @@ def main():
     print(f"index.html gerado: {len(D)} decisões, {len(html.encode()) // 1024} KB")
     arquivos_do_app(os.path.join(HERE, ".."), "ceo-game", "The CEO Game", "CEO Game",
                     "Choose your own adventure: be the CEO of a startup and practice the first and second conditional.", html)
+    # página do professor com o QR code do jogo (para imprimir ou projetar)
+    from qr import pagina_professor
+    pag = pagina_professor("The CEO Game", "2º ano · First and second conditional · Ensino Médio Integrado (IFAL)",
+                           [("The CEO Game", "2º ano · First and second conditional", URL)])
+    open(os.path.join(HERE, "..", "professor.html"), "w", encoding="utf-8", newline="\n").write(pag)
+    print("professor.html gerado (QR code do jogo)")
 
 # ---------------- aplicativo (PWA): instalar no celular e abrir sem internet ----------------
 ICONES = ["icon-192.png", "icon-512.png", "apple-touch-icon.png"]
-SW = """// GERADO por fonte/build.py. Nunca edite à mão.
+SW = r"""// GERADO por fonte/build.py. Nunca edite à mão.
 // Guarda o jogo no aparelho na primeira visita; depois ele abre mesmo sem internet.
 // A versão muda a cada build: o celular baixa o jogo novo na próxima vez que abrir com internet.
 const CACHE = "__PREFIXO__-__VERSAO__";
@@ -95,7 +102,8 @@ self.addEventListener("fetch", e => {
   const r = e.request;
   if (r.method !== "GET" || new URL(r.url).origin !== location.origin) return;
   e.respondWith(caches.open(CACHE).then(c => c.match(r, { ignoreSearch: true }).then(achou => achou ||
-    fetch(r).catch(() => r.mode === "navigate" ? c.match("index.html") : Response.error()))));
+    // sem internet, só a página inicial vira o jogo guardado (professor.html, por exemplo, não)
+    fetch(r).catch(() => r.mode === "navigate" && /\/(index\.html)?$/.test(new URL(r.url).pathname) ? c.match("index.html") : Response.error()))));
 });
 """
 

@@ -44,6 +44,12 @@ Funciona no celular, sem instalar nada, e também sem internet.
   tamanho do texto e
   animações. Ficam guardadas no próprio aparelho.
 
+## QR codes para a aula
+
+A página **https://ritassiru.github.io/the-ceo-game/professor.html** tem o QR code do jogo, pronta para
+imprimir (vários por folha) ou projetar (um por página). Ela é gerada pelo
+`build.py` e se atualiza sozinha.
+
 ## Instalar no celular e usar sem internet
 
 Depois da **primeira** visita com internet, o celular guarda o jogo e ele abre

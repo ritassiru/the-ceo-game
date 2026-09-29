@@ -18,5 +18,6 @@ self.addEventListener("fetch", e => {
   const r = e.request;
   if (r.method !== "GET" || new URL(r.url).origin !== location.origin) return;
   e.respondWith(caches.open(CACHE).then(c => c.match(r, { ignoreSearch: true }).then(achou => achou ||
-    fetch(r).catch(() => r.mode === "navigate" ? c.match("index.html") : Response.error()))));
+    // sem internet, só a página inicial vira o jogo guardado (professor.html, por exemplo, não)
+    fetch(r).catch(() => r.mode === "navigate" && /\/(index\.html)?$/.test(new URL(r.url).pathname) ? c.match("index.html") : Response.error()))));
 });
