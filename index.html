@@ -813,9 +813,37 @@ function checkSentence(s) {
   if (!/\bif\b/.test(low)) return { ok: false, msg: "Your sentence needs the word “if”." };
   if (/\bwill\b|\bwon't\b|\w'll\b/.test(low)) return { ok: false, msg: "Use “would”, not “will”. “Will” is for the first conditional." };
   if (!/\bwould\b|\bwouldn't\b|\w'd\b/.test(low)) return { ok: false, msg: "Your sentence needs “would” (or 'd)." };
-  if (/\bif (i|he|she|it) was\b/.test(low)) return { ok: true, msg: "Good! Tip: in the second conditional, we usually say “If I were...”." };
+  // erros típicos de estrutura: a frase não passa, e a dica explica em português
+  const SUJ = "(i|you|he|she|it|we|they|my \\w+|our \\w+|the \\w+)";
+  if (new RegExp(`\\bif ${SUJ} (would|wouldn't)\\b`).test(low))
+    return { ok: false, msg: "Don't use “would” after “if”. · Depois de if vai o passado: If I had..., If I were..., e o would fica na outra parte." };
+  const depois = (low.match(/\b(?:would|wouldn't)\s+(?:not\s+)?([a-z']+)/) || [])[1] || "";
+  if (depois === "to") return { ok: false, msg: "No “to” after “would”. · Depois de would vem o verbo direto: would buy (não would to buy)." };
+  if (/ing$/.test(depois) && !WOULD_OK.has(depois)) return { ok: false, msg: "Use the base form after “would”. · Depois de would, o verbo fica na forma base: would buy (não would buying)." };
+  if (PAST_ONLY.has(depois) || (/ed$/.test(depois) && !WOULD_OK.has(depois)))
+    return { ok: false, msg: `Use the base form after “would”. · Depois de would, o verbo fica na forma base: ${PAST_TIP(depois)}.` };
+  const ifVerb = (low.match(new RegExp(`\\bif ${SUJ} ([a-z']+)`)) || [])[2] || "";
+  if (PRESENT.has(ifVerb))
+    return { ok: false, msg: `Use the past after “if”. · Na second conditional, o lado do if vai no passado: ${PRESENT_TIP(ifVerb)}.` };
+  // dicas: a frase passa, mas o aluno aprende
+  const dicas = [];
+  if (/\bif (i|he|she|it) was\b/.test(low)) dicas.push("in the second conditional, we usually say “If I were...”");
+  if (/^if\b/i.test(t) && !t.includes(",")) dicas.push("when the sentence starts with “If”, use a comma: If I were rich, I would...");
+  if (dicas.length) return { ok: true, msg: "Good! Tip: " + dicas.join(" Also, ") + "." };
   return { ok: true, msg: "Looks good! Copy it into your notebook." };
 }
+// apoio para checkSentence: formas que só existem no passado (went, bought...), verbos que terminam em -ing/-ed
+// na forma base (bring, need...) e o presente mais comum depois de if
+const WOULD_OK = new Set(["bring", "sing", "ring", "swing", "spring", "string", "need", "feed", "seed", "speed", "bleed", "breed",
+  "proceed", "succeed", "exceed", "embed", "shed", "wed", "red", "indeed"]);
+const PAST_ONLY = new Map();
+IRREG.forEach(([b, p, pp]) => [...p.split(" / "), ...pp.split(" / ")].forEach(f => { if (f !== b && !PAST_ONLY.has(f)) PAST_ONLY.set(f, b); }));
+const PAST_TIP = w => PAST_ONLY.has(w) ? `would ${PAST_ONLY.get(w)} (não would ${w})` : `would + o verbo sem -ed (não would ${w})`;
+const PRESENT = new Set(["am", "is", "are", "have", "has", "do", "does", "don't", "doesn't", "can", "can't", "want", "wants", "need", "needs", "know", "knows"]);
+const PRESENT_TIP = w => ({ am: "If I were (não If I am)", is: "If it were (não If it is)", are: "If we were (não If we are)", have: "If I had (não If I have)",
+  has: "If she had (não If she has)", do: "If I did (não If I do)", does: "If he did (não If he does)", "don't": "If I didn't (não If I don't)",
+  "doesn't": "If it didn't (não If it doesn't)", can: "If I could (não If I can)", "can't": "If I couldn't (não If I can't)" })[w]
+  || `If I ${w.replace(/s$/, "") === "know" ? "knew" : w.replace(/s$/, "") + "ed"} (não If I ${w})`;
 
 /* ---------------- áudio: a voz em inglês que já vem no celular (nada é baixado nem enviado) ---------------- */
 const synth = "speechSynthesis" in window ? window.speechSynthesis : null;

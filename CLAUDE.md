@@ -134,6 +134,12 @@ em largura de celular, para conferir.
   desligado (os botões somem). Sem voz em inglês no aparelho, a opção e os
   botões nem aparecem. No PC de teste do professor o Chrome só tem vozes do
   Google, que precisam de internet; no Android as vozes costumam ser locais.
+- **Checagem das frases (`checkSentence`):** além de *if* + *would* e de recusar
+  *will*, **recusa** com dica em português: *would* depois de *if* (*If I would
+  be*), *would to*, *would* + *-ing* ou passado (*would hired/bought*) e presente
+  depois de *if* (*If I have/am/can*). *If I was* e a falta de vírgula depois do
+  *If* **passam**, com dica. Toda frase que o montador forma precisa passar sem
+  erro: se mudar a checagem ou uma `phrase`, teste as 1.008 combinações.
 - Tudo que usa `localStorage` fica dentro de `try/catch`: o jogo precisa
   funcionar mesmo se o navegador bloquear o armazenamento.
 - Texto digitado pelo aluno (nome da startup) sempre passa por `esc()`.
