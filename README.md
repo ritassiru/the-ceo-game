@@ -177,3 +177,14 @@ Fontes: [Fraunces](https://github.com/undercasetype/Fraunces) (The Fraunces
 Project Authors) e [Atkinson Hyperlegible](https://www.brailleinstitute.org/freefont/)
 (Braille Institute), ambas sob a SIL Open Font License 1.1. As licenças estão
 em `fonte/fonts/`.
+
+## Licença
+
+- **Conteúdo** (situações e textos do jogo, glossários, ilustrações e materiais de aula):
+  [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Pode copiar,
+  adaptar e redistribuir, inclusive para uso comercial, dando o crédito e
+  mantendo a mesma licença.
+- **Código**: [MIT](LICENSE).
+- **Fontes**: SIL Open Font License 1.1 (veja `fonte/fonts/`).
+
+Detalhes no arquivo [LICENSE](LICENSE).

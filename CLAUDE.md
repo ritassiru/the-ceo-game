@@ -103,6 +103,8 @@ em largura de celular, para conferir.
   Tamanhos de fonte em `rem`, para acompanharem a opção de tamanho do texto.
   O projeto irmão `ritassiru/story-shelf` (pasta vizinha `../story-shelf`) tem
   o mesmo painel e o mesmo glossário Beginner: mudança em um, avalie no outro.
+  `python3 fonte/comparar.py` (com `--detalhes`) mostra onde as partes
+  compartilhadas ficaram diferentes; parte das diferenças é de propósito.
 - Tela final: 9 finais, "Looking back" (melhor decisão nunca pode ter custado
   mais de 15 pontos num medidor; o erro mais caro é medido pelo medidor que
   afundou a empresa) e mapa de finais descobertos.
@@ -153,6 +155,9 @@ em largura de celular, para conferir.
 
 ## O que não fazer
 
+- Licença (decidida em set/2026, arquivo `LICENSE`): conteúdo em CC BY-SA 4.0,
+  código em MIT, fontes em OFL. Não mude sem o professor pedir.
+
 - Não adicionar bibliotecas externas, CDNs nem qualquer acesso à rede.
 - Não coletar nem enviar dados dos alunos.
 - Não reproduzir letras de música ou textos protegidos.
@@ -163,7 +168,6 @@ em largura de celular, para conferir.
 - O plano e os slides em `aula/` ainda apontam para o link antigo do
   claude.ai. Quando o GitHub Pages estiver ativo, o professor vai atualizar
   esses arquivos.
-- Licença do repositório ainda não definida.
 - A GitHub Action `.github/workflows/build.yml` roda `build.py` e `checar.py`
   a cada push em `fonte/` e salva o `index.html`. Depois de um push, faça
   `git pull` antes de continuar, porque a Action pode ter criado um commit.

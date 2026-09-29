@@ -1,0 +1,55 @@
+Este repositório usa duas licenças: uma para o código e outra para o conteúdo.
+This repository uses two licenses: one for the code and one for the content.
+
+================================================================================
+CONTEÚDO / CONTENT — Creative Commons Attribution-ShareAlike 4.0 (CC BY-SA 4.0)
+================================================================================
+
+Copyright (c) 2026 Ritaciro Cavalcante (IFAL Campus Viçosa)
+
+O conteúdo didático deste repositório está sob a licença CC BY-SA 4.0:
+os textos do jogo (situações, falas, resultados e finais), os glossários,
+as ilustrações e os materiais de aula. Isso inclui, por exemplo,
+fonte/decisions.json, fonte/a1.json, fonte/irreg.json, os textos dentro de
+fonte/template.html e a pasta aula/.
+
+Você pode copiar, adaptar e redistribuir, inclusive para uso comercial,
+desde que dê o crédito ao autor e distribua o material adaptado sob a mesma
+licença.
+
+The educational content (game texts, glossaries, illustrations and lesson
+materials) is licensed under CC BY-SA 4.0:
+https://creativecommons.org/licenses/by-sa/4.0/
+Full legal code: https://creativecommons.org/licenses/by-sa/4.0/legalcode
+
+================================================================================
+CÓDIGO / CODE — MIT License
+================================================================================
+
+Copyright (c) 2026 Ritaciro Cavalcante (IFAL Campus Viçosa)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+================================================================================
+FONTES / FONTS
+================================================================================
+
+As fontes em fonte/fonts/ (Fraunces e Atkinson Hyperlegible) têm a licença
+própria delas, a SIL Open Font License 1.1. Veja os arquivos LICENSE-*.txt
+naquela pasta.
