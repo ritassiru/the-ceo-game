@@ -226,6 +226,17 @@ textarea { min-height: 76px; resize: vertical; }
 .chip.on, .chip[aria-pressed="true"] { border-color: var(--berry); background: var(--cream); }
 .chip:focus-visible, .help-btn:focus-visible { outline: 3px solid var(--rep); outline-offset: 2px; }
 .again-hint { text-align: center; margin: 8px 0 0; }
+/* My words */
+.wlist { list-style: none; padding: 0; margin: 4px 0 8px; }
+.wlist li { padding: 6px 0; border-top: 1px solid var(--line); }
+.wlist li:first-child { border-top: 0; }
+.wlist li span { color: var(--muted); }
+.wcard { text-align: center; padding: 22px 12px; margin: 6px 0 12px; border: 2px dashed var(--rose); border-radius: 14px; background: var(--bg); }
+.wcard b { display: block; font-family: "Fraunces", Georgia, serif; font-size: 1.6rem; color: var(--berry); line-height: 1.2; }
+.wcard span { display: block; margin-top: 8px; font-size: 1.1rem; }
+.wbtns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.wscore { font-weight: 700; font-size: 1.15rem; color: var(--berry); }
+.wscore span { font-weight: 400; font-size: 0.95rem; color: var(--muted); }
 .resume { font-weight: 700; color: var(--bad); margin: 0 0 10px; padding: 8px 10px; border: 2px solid var(--bad); border-radius: 10px; }
 .kw-g { font-weight: 700; margin: 14px 0 6px; }
 .kw-g span { font-weight: 400; color: var(--muted); }
@@ -375,7 +386,7 @@ let state = { name: "", deck: [], idx: 0, cash: 50, rep: 50, history: [], ended:
 
 function newGame(keepName) {
   const name = keepName ? state.name : "";
-  state = { name, deck: shuffle(DECISIONS).slice(0, ROUNDS), idx: 0, cash: 50, rep: 50, history: [], ended: null };
+  state = { name, deck: shuffle(DECISIONS).slice(0, ROUNDS), idx: 0, cash: 50, rep: 50, history: [], ended: null, t0: Date.now() };
 }
 
 function outcome() {
@@ -415,7 +426,7 @@ function screenStart() {
       <input type="text" id="nm" maxlength="28" autocomplete="off" placeholder="e.g. FoodBox" value="${esc(state.name)}">
       <p class="err" id="nm-err"></p>
       <button class="btn center" id="go">Start the game</button>
-    </div>` + historyHTML();
+    </div>` + wordsHomeHTML() + historyHTML();
   const go = () => {
     const v = $("#nm").value.trim();
     if (!v) { $("#nm-err").textContent = "Type a name for your startup to start."; $("#nm").focus(); return; }
@@ -600,7 +611,7 @@ function historyHTML() {
 }
 
 /* partida que terminou mas ainda não teve as 3 frases conferidas */
-function savePending() { try { localStorage.setItem("ceo-game-pending", JSON.stringify({ name: state.name, history: state.history, ended: state.ended, cash: state.cash, rep: state.rep })); } catch (e) { /* sem armazenamento */ } }
+function savePending() { try { localStorage.setItem("ceo-game-pending", JSON.stringify({ name: state.name, history: state.history, ended: state.ended, cash: state.cash, rep: state.rep, t0: state.t0 })); } catch (e) { /* sem armazenamento */ } }
 function loadPending() { try { return JSON.parse(localStorage.getItem("ceo-game-pending") || "null"); } catch (e) { return null; } }
 function clearPending() { try { localStorage.removeItem("ceo-game-pending"); } catch (e) { /* sem armazenamento */ } }
 
@@ -677,6 +688,7 @@ function screenReflect() {
       <p class="done" id="done" hidden></p>
       <p class="hint" style="margin-top:12px">When your three sentences are OK, copy them into your notebook and show them to your teacher.</p>
     </div>
+    ${wordsCardHTML(state.t0 || 0)}
     <button class="btn alt center" id="again" disabled>Play again with new decisions</button>
     <p class="hint again-hint" id="again-hint">🔒 Para jogar de novo, escreva as 3 frases e toque em <b>Check my sentences</b>. · Write and check your 3 sentences to play again.</p>`;
   $("#check").onclick = () => {
@@ -868,26 +880,32 @@ function installHTML() {
   return "";
 }
 let stReturn = null;   // de onde veio o foco, para voltar ao fechar
-function openSettings() {
+function openSheet(html) {
   const o = $("#settings");
-  stReturn = document.activeElement;
+  if (o.hidden) stReturn = document.activeElement;
   $("#tip").classList.remove("on");
-  o.innerHTML = settingsHTML(); o.hidden = false;
+  o.innerHTML = html; o.hidden = false;
   document.body.style.overflow = "hidden";
-  o.querySelector('[aria-pressed="true"]').focus();
+  (o.querySelector('[aria-pressed="true"]') || o.querySelector(".sheet button")).focus();
 }
+const openSettings = () => openSheet(settingsHTML());
 function closeSettings() {
   const o = $("#settings");
   o.hidden = true; o.innerHTML = "";
   document.body.style.overflow = "";
+  // as palavras podem ter sido apagadas na revisão: atualiza os cartões da tela
+  const h = $("#w-home"); if (h) h.outerHTML = wordsHomeHTML();
+  const c = $("#w-end"); if (c) c.outerHTML = wordsCardHTML(+c.dataset.since);
   const back = stReturn && stReturn !== document.body && document.contains(stReturn) ? stReturn : $("#gear");
   if (back) back.focus();
 }
 document.addEventListener("click", (e) => {
   if (e.target.closest("#gear")) { openSettings(); return; }
+  if (e.target.closest("#w-review")) { openWords(); return; }
   const o = $("#settings");
   if (o.hidden) return;
   if (e.target === o || e.target.closest("#st-close")) { closeSettings(); return; }
+  if (wordsClick(e)) return;
   if (e.target.closest("#st-install") && installEvt) {
     const ev = installEvt; installEvt = null;
     ev.prompt();
@@ -912,6 +930,87 @@ document.addEventListener("keydown", (e) => {
   else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
 });
 
+/* ---------------- My words: as palavras consultadas no glossário (ficam só no aparelho) ---------------- */
+const WKEY = "ceo-game-words";
+const loadWords = () => { try { const v = JSON.parse(localStorage.getItem(WKEY) || "[]"); return Array.isArray(v) ? v : []; } catch (e) { return []; } };
+const saveWords = ws => { try { localStorage.setItem(WKEY, JSON.stringify(ws.slice(0, 300))); } catch (e) { /* sem armazenamento */ } };
+// en: como a palavra aparece na lista (verbos com as formas); k: chave única
+function rememberWord(k, en, pt) {
+  const ws = loadWords(), i = ws.findIndex(w => w.k === k);
+  const w = i >= 0 ? ws.splice(i, 1)[0] : { k, n: 0, ok: 0 };
+  Object.assign(w, { en, pt, t: Date.now() }); w.n++;
+  saveWords([w, ...ws]);
+}
+const wordOf = g => { const s = (g.dataset.base || g.textContent).trim(); return s.length <= 3 && s === s.toUpperCase() ? s : s.toLowerCase(); };
+const wordsList = ws => `<ul class="wlist">${ws.map(w => `<li><b>${esc(w.en)}</b> <span>= ${esc(w.pt)}</span></li>`).join("")}</ul>`;
+const reviewButton = () => `<button type="button" class="help-btn" id="w-review">Review my words <span>· revisar em cartões</span></button>`;
+
+// no fim da partida: as palavras consultadas nesta partida
+function wordsCardHTML(since) {
+  const all = loadWords(), now = all.filter(w => w.t >= since);
+  if (!all.length) return "";
+  return `<div class="card" id="w-end" data-since="${since}"><p class="lb-t" style="margin-top:0">My words <span>· minhas palavras</span></p>
+    ${now.length ? `<p class="hint">As palavras que você consultou nesta partida. Copie no caderno!</p>${wordsList(now)}`
+                 : `<p class="hint">Você não consultou nenhuma palavra nesta partida.</p>`}
+    ${reviewButton()}</div>`;
+}
+// na tela inicial: acesso à revisão
+function wordsHomeHTML() {
+  const n = loadWords().length;
+  return n ? `<div class="card" id="w-home"><p class="lb-t" style="margin-top:0">My words <span>· minhas palavras</span></p>
+    <p class="hint">${n} ${n === 1 ? "palavra consultada" : "palavras consultadas"} no glossário, guardadas neste aparelho.</p>${reviewButton()}</div>` : "";
+}
+
+// revisão em cartões, no mesmo painel das configurações (não mexe na partida)
+let rv = null;
+function openWords() {
+  const ws = loadWords().sort((a, b) => (a.ok - b.ok) || (b.t - a.t));   // as que ainda não sabe vêm primeiro
+  rv = { deck: ws.slice(0, 10), i: 0, ok: 0, shown: false, armed: false };
+  openSheet(wordsHTML());
+}
+function wordsHTML() {
+  const all = loadWords(), head = `<h2 id="st-t">My words <span>· minhas palavras</span></h2>`;
+  const done = `<button type="button" class="btn center" id="st-close">Done <span>· pronto</span></button>`;
+  if (!all.length) return `<div class="sheet" role="dialog" aria-modal="true" aria-labelledby="st-t">${head}
+    <p>Toque nas palavras sublinhadas durante o jogo: elas aparecem aqui para você revisar.</p>${done}</div>`;
+  if (rv.i >= rv.deck.length) return `<div class="sheet" role="dialog" aria-modal="true" aria-labelledby="st-t">${head}
+    <p class="wscore">You knew ${rv.ok} of ${rv.deck.length}! <span>· você sabia ${rv.ok} de ${rv.deck.length}</span></p>
+    <div class="choices"><button type="button" class="btn alt center" id="w-again">Review again <span>· revisar de novo</span></button></div>
+    <p class="lb-t">All my words <span>· todas as minhas palavras (${all.length})</span></p>${wordsList(all)}
+    <button type="button" class="help-btn" id="w-clear">${rv.armed ? "Tap again to delete <span>· toque de novo para apagar</span>" : "Clear my words <span>· apagar minhas palavras</span>"}</button>
+    <div class="choices">${done}</div></div>`;
+  const w = rv.deck[rv.i];
+  return `<div class="sheet" role="dialog" aria-modal="true" aria-labelledby="st-t">${head}
+    <p class="hint">Card ${rv.i + 1} of ${rv.deck.length} · cartão ${rv.i + 1} de ${rv.deck.length}</p>
+    <div class="wcard" aria-live="polite"><b>${esc(w.en)}</b>${rv.shown ? `<span>= ${esc(w.pt)}</span>` : `<span class="hint">O que significa? · What does it mean?</span>`}</div>
+    ${rv.shown ? `<div class="wbtns"><button type="button" class="btn center" id="w-yes">I knew it ✓ <span>· eu sabia</span></button>
+      <button type="button" class="btn alt center" id="w-no">Not yet ↻ <span>· ainda não</span></button></div>`
+      : `<button type="button" class="btn center" id="w-show">Show the translation <span>· ver a tradução</span></button>`}
+    <div class="choices">${done.replace("btn center", "btn alt center")}</div></div>`;
+}
+function redrawWords(focusId) {
+  $("#settings").innerHTML = wordsHTML();
+  const f = (focusId && $("#" + focusId)) || $("#settings .sheet button");
+  if (f) f.focus();
+}
+function wordsClick(e) {
+  const b = e.target.closest("#w-show, #w-yes, #w-no, #w-again, #w-clear");
+  if (!b) return false;
+  if (b.id === "w-show") { rv.shown = true; redrawWords("w-yes"); }
+  else if (b.id === "w-yes" || b.id === "w-no") {
+    const ws = loadWords(), w = ws.find(x => x.k === rv.deck[rv.i].k);
+    if (w) { w.ok = b.id === "w-yes" ? w.ok + 1 : 0; saveWords(ws); }
+    if (b.id === "w-yes") rv.ok++;
+    rv.i++; rv.shown = false; redrawWords("w-show");
+  }
+  else if (b.id === "w-again") openWords();
+  else if (b.id === "w-clear") {
+    if (rv.armed) { saveWords([]); rv.armed = false; redrawWords(); }
+    else { rv.armed = true; redrawWords("w-clear"); setTimeout(() => { if (rv && rv.armed) { rv.armed = false; if (!$("#settings").hidden && $("#w-clear")) redrawWords("w-clear"); } }, 4000); }
+  }
+  return true;
+}
+
 /* ---------------- glossary popover ---------------- */
 document.addEventListener("click", (e) => {
   const tip = $("#tip");
@@ -922,8 +1021,10 @@ document.addEventListener("click", (e) => {
     const on = g.dataset.c ? g.dataset.c.split(",").map(Number) : [];
     tip.innerHTML = `<div class="vt">${[["infinitive", b], ["past", p], ["participle", pp]].map(([lab, f], i) =>
       `<div class="vc${on.includes(i) ? " on" : ""}"><span>${lab}</span><b>${esc(f)}</b></div>`).join("")}</div><div class="vpt">= ${esc(pt)}</div>`;
+    rememberWord("v:" + b, `${b} · ${p} · ${pp}`, pt);
   } else {
     tip.textContent = g.textContent + (g.dataset.base ? ` (${g.dataset.base})` : "") + " = " + g.dataset.pt;
+    rememberWord("g:" + wordOf(g), wordOf(g), g.dataset.pt);
   }
   tip.classList.add("on");
   const r = g.getBoundingClientRect();
@@ -958,7 +1059,7 @@ new MutationObserver(dedupeGloss).observe($("#app"), { childList: true, subtree:
 
 const pending = loadPending();
 if (pending && Array.isArray(pending.history) && ENDINGS[pending.ended]) {
-  state = { name: pending.name, deck: [], idx: 0, cash: pending.cash, rep: pending.rep, history: pending.history, ended: pending.ended, saved: true, resumed: true };
+  state = { name: pending.name, deck: [], idx: 0, cash: pending.cash, rep: pending.rep, history: pending.history, ended: pending.ended, saved: true, resumed: true, t0: pending.t0 || Date.now() };
   screenReflect();
 } else {
   screenStart();

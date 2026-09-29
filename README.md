@@ -33,6 +33,9 @@ Funciona no celular, sem instalar nada, e também sem internet.
   limitado a 2 das 3 frases.
 - **Trava:** só dá para jogar de novo depois de escrever e conferir as 3 frases.
 - **Histórico** das últimas partidas.
+- **My words:** as palavras que o aluno consultou no glossário aparecem no fim
+  da partida, para copiar no caderno, e podem ser revisadas em cartões (tela
+  inicial). Ficam só no aparelho.
 - **Configurações** (ícone de engrenagem, em todas as telas): glossário em três
   níveis (*Normal*, só as palavras difíceis; *Beginner*, para iniciantes totais
   (A1), com quase todas as palavras traduzidas e tradução nos botões; *Off*), cores (automático, claro ou escuro), tamanho do texto e

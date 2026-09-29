@@ -120,6 +120,12 @@ em largura de celular, para conferir.
   o prefixo do cache (`ceo-game-` / `story-shelf-`) impede um de apagar o do
   outro. Ícones: `python3 fonte/icones.py` (sem dependências). O navegador
   embutido do app do Claude **não aceita service workers**: teste no Chrome.
+- **My words:** toda palavra cujo balão o aluno abre fica guardada no aparelho
+  (`ceo-game-words`), com a tradução (verbos com as formas). O cartão *My words* aparece
+  no fim da partida (só as palavras daquela partida, pelo `state.t0`) e
+  na tela inicial, e a revisão em cartões abre no mesmo painel das configurações
+  (`openSheet`), então não mexe na partida nem na trava do *Play again*. *Not yet* zera o acerto da palavra,
+  e ela volta primeiro na próxima revisão. *Clear my words* pede dois toques.
 - Tudo que usa `localStorage` fica dentro de `try/catch`: o jogo precisa
   funcionar mesmo se o navegador bloquear o armazenamento.
 - Texto digitado pelo aluno (nome da startup) sempre passa por `esc()`.
