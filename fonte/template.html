@@ -4,6 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>The CEO Game</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#6D2E46">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="CEO Game">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fraunces:opsz,wght@9..144,600;9..144,800&display=swap" rel="stylesheet">
@@ -832,8 +838,30 @@ function settingsHTML() {
         <div class="chips">${opts.map(([v, oen, opt]) =>
           `<button type="button" class="chip" data-k="${k}" data-v="${v}" aria-pressed="${SET[k] === v}"><b>${oen}</b><span>${opt}</span></button>`).join("")}</div>
       </div>`).join("")}
+    ${installHTML()}
     <button type="button" class="btn center" id="st-close">Done <span>· pronto</span></button>
   </div>`;
+}
+
+/* ---------------- aplicativo: guarda o jogo no aparelho para abrir sem internet ---------------- */
+if ("serviceWorker" in navigator && /^(https:|http:\/\/(localhost|127\.0\.0\.1)[:/])/.test(location.href)) {
+  window.addEventListener("load", () => {
+    try { navigator.serviceWorker.register("sw.js").catch(() => { /* sem aplicativo: o jogo funciona igual */ }); } catch (e) { /* idem */ }
+  });
+}
+let installEvt = null;   // o Android oferece a instalação; guardamos para o botão do painel
+window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); installEvt = e; });
+window.addEventListener("appinstalled", () => { installEvt = null; });
+const instalado = () => matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+const iPhone = () => /iphone|ipad|ipod/i.test(navigator.userAgent);
+function installHTML() {
+  if (instalado()) return "";
+  if (installEvt) return `<div class="st-g"><p class="step-t">App <span>· aplicativo</span></p>
+    <p class="st-h">Instale o jogo no celular: ele ganha um ícone e abre mesmo sem internet.</p>
+    <button type="button" class="chip" id="st-install"><b>Install the game</b><span>instalar no celular</span></button></div>`;
+  if (iPhone()) return `<div class="st-g"><p class="step-t">App <span>· aplicativo</span></p>
+    <p class="st-h">No iPhone: toque em <b>Compartilhar</b> (o quadrado com a seta) e depois em <b>Adicionar à Tela de Início</b>. O jogo abre mesmo sem internet.</p></div>`;
+  return "";
 }
 let stReturn = null;   // de onde veio o foco, para voltar ao fechar
 function openSettings() {
@@ -856,6 +884,12 @@ document.addEventListener("click", (e) => {
   const o = $("#settings");
   if (o.hidden) return;
   if (e.target === o || e.target.closest("#st-close")) { closeSettings(); return; }
+  if (e.target.closest("#st-install") && installEvt) {
+    const ev = installEvt; installEvt = null;
+    ev.prompt();
+    ev.userChoice.finally(() => { const g = $("#st-install"); if (g) g.closest(".st-g").remove(); $("#st-close").focus(); });
+    return;
+  }
   const c = e.target.closest(".chip[data-k]");
   if (!c) return;
   SET[c.dataset.k] = c.dataset.v;

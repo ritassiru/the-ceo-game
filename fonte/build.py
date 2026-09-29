@@ -4,8 +4,10 @@ Uso:  python3 fonte/build.py
 
 O arquivo gerado é autossuficiente: as fontes vão embutidas, então ele funciona
 no GitHub Pages, aberto direto do computador ou do celular, com ou sem internet.
+Gera também manifest.webmanifest e sw.js, que deixam instalar o jogo no celular
+e abri-lo sem internet depois da primeira visita (os ícones vêm de icones.py).
 """
-import base64, json, os, re
+import base64, hashlib, json, os, re
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 path = lambda *p: os.path.join(HERE, *p)
@@ -68,6 +70,51 @@ def main():
     out = os.path.join(HERE, "..", "index.html")
     open(out, "w", encoding="utf-8").write(html)
     print(f"index.html gerado: {len(D)} decisões, {len(html.encode()) // 1024} KB")
+    arquivos_do_app(os.path.join(HERE, ".."), "ceo-game", "The CEO Game", "CEO Game",
+                    "Choose your own adventure: be the CEO of a startup and practice the first and second conditional.", html)
+
+# ---------------- aplicativo (PWA): instalar no celular e abrir sem internet ----------------
+ICONES = ["icon-192.png", "icon-512.png", "apple-touch-icon.png"]
+SW = """// GERADO por fonte/build.py. Nunca edite à mão.
+// Guarda o jogo no aparelho na primeira visita; depois ele abre mesmo sem internet.
+// A versão muda a cada build: o celular baixa o jogo novo na próxima vez que abrir com internet.
+const CACHE = "__PREFIXO__-__VERSAO__";
+const ARQUIVOS = __ARQUIVOS__;
+self.addEventListener("install", e => {
+  e.waitUntil(caches.open(CACHE)
+    .then(c => c.addAll(ARQUIVOS.map(f => new Request(f, { cache: "reload" }))))
+    .then(() => self.skipWaiting()));
+});
+self.addEventListener("activate", e => {
+  // apaga só as versões antigas deste jogo (o outro projeto no mesmo site tem outro prefixo)
+  e.waitUntil(caches.keys()
+    .then(ks => Promise.all(ks.filter(k => k.startsWith("__PREFIXO__-") && k !== CACHE).map(k => caches.delete(k))))
+    .then(() => self.clients.claim()));
+});
+self.addEventListener("fetch", e => {
+  const r = e.request;
+  if (r.method !== "GET" || new URL(r.url).origin !== location.origin) return;
+  e.respondWith(caches.open(CACHE).then(c => c.match(r, { ignoreSearch: true }).then(achou => achou ||
+    fetch(r).catch(() => r.mode === "navigate" ? c.match("index.html") : Response.error()))));
+});
+"""
+
+def arquivos_do_app(raiz, prefixo, nome, curto, descricao, html):
+    """Grava manifest.webmanifest e sw.js ao lado do index.html."""
+    manifest = {"name": nome, "short_name": curto, "description": descricao, "lang": "en",
+                "start_url": "./", "scope": "./", "display": "standalone",
+                "background_color": "#F6F0E6", "theme_color": "#6D2E46",
+                "icons": [{"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+                          {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+                          {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}]}
+    man = json.dumps(manifest, ensure_ascii=False, indent=1) + "\n"
+    open(os.path.join(raiz, "manifest.webmanifest"), "w", encoding="utf-8", newline="\n").write(man)
+    # a versão sai do conteúdo (e não do arquivo gravado), para dar o mesmo resultado no Windows e no GitHub
+    versao = hashlib.sha256((html + man).encode()).hexdigest()[:12]
+    arquivos = ["./", "index.html", "manifest.webmanifest"] + ICONES
+    sw = SW.replace("__PREFIXO__", prefixo).replace("__VERSAO__", versao).replace("__ARQUIVOS__", json.dumps(arquivos))
+    open(os.path.join(raiz, "sw.js"), "w", encoding="utf-8", newline="\n").write(sw)
+    print(f"aplicativo: manifest.webmanifest e sw.js (versão {versao})")
 
 if __name__ == "__main__":
     main()

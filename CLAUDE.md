@@ -24,6 +24,8 @@ fonte/endings_params.json limites dos 9 finais
 fonte/build.py            gera ../index.html com os dados e as fontes embutidas
 fonte/checar.py           confere o balanceamento (usa sim32.py e endings_sim.py)
 index.html                GERADO. Nunca edite à mão.
+sw.js, manifest.webmanifest  GERADOS pelo build.py (aplicativo instalável, sem internet)
+icon-*.png, apple-touch-icon.png  ícones do aplicativo (fonte/icones.py)
 aula/                     plano, slides e atividade (gerados fora deste repo)
 ```
 
@@ -109,6 +111,15 @@ em largura de celular, para conferir.
   pendente fica salva, e recarregar a página volta para as frases.
 - Histórico das últimas partidas na tela inicial, com opção de apagar
   (dois toques).
+- **Aplicativo (PWA):** o `build.py` gera `sw.js` e `manifest.webmanifest`
+  (GERADOS, nunca edite à mão) e o template registra o `sw.js` só em https ou
+  localhost. O `sw.js` guarda o `index.html` e os ícones no aparelho; a versão
+  (`CACHE`) vem do conteúdo, então **todo build que muda o jogo muda o `sw.js`**
+  e o celular pega a versão nova ao abrir com internet (na primeira ou na
+  segunda vez). Os dois projetos ficam no mesmo site (`ritassiru.github.io`):
+  o prefixo do cache (`ceo-game-` / `story-shelf-`) impede um de apagar o do
+  outro. Ícones: `python3 fonte/icones.py` (sem dependências). O navegador
+  embutido do app do Claude **não aceita service workers**: teste no Chrome.
 - Tudo que usa `localStorage` fica dentro de `try/catch`: o jogo precisa
   funcionar mesmo se o navegador bloquear o armazenamento.
 - Texto digitado pelo aluno (nome da startup) sempre passa por `esc()`.

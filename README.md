@@ -38,6 +38,18 @@ Funciona no celular, sem instalar nada, e também sem internet.
   (A1), com quase todas as palavras traduzidas e tradução nos botões; *Off*), cores (automático, claro ou escuro), tamanho do texto e
   animações. Ficam guardadas no próprio aparelho.
 
+## Instalar no celular e usar sem internet
+
+Depois da **primeira** visita com internet, o celular guarda o jogo e ele abre
+mesmo sem sinal. Para ter um ícone na tela inicial:
+
+- **Android (Chrome):** engrenagem ⚙️ → *Install the game*, ou menu ⋮ →
+  *Instalar app* / *Adicionar à tela inicial*.
+- **iPhone (Safari):** botão *Compartilhar* → *Adicionar à Tela de Início*.
+
+Quando você publica uma mudança, o celular baixa a versão nova sozinho na
+próxima vez que abrir com internet (às vezes só na segunda vez).
+
 ## Como usar em aula
 
 O plano completo está em [`aula/`](aula/): plano de 4 encontros sobre Zero,
