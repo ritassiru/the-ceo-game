@@ -66,6 +66,10 @@ em largura de celular, para conferir.
   empresas de verdade decolam por meios escusos, e isso é realista. O
   professor aceita até cerca de 1% dos sorteios (em set/2026, "sempre mais
   reputação" estava em 1,14%). Não gaste rodadas de teste para zerar isso.
+  Já se tentou (set/2026) fazer "sempre mais dinheiro" também decolar, dando
+  reputação a opções duvidosas: não funciona sem quebrar a garantia das três
+  faixas e inflar o Unicórnio. O professor decidiu deixar como está. A única
+  saída seria acrescentar sorte ao jogo, o que exige mudar o JS e a simulação.
 - Se mudar qualquer regra de final, verifique que a lógica do jogo (JS) dá o
   mesmo resultado que a simulação (Python).
 
