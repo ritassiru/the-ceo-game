@@ -62,7 +62,10 @@ em largura de celular, para conferir.
   situações envolvidas), e só depois os limites.
 - O Unicórnio deve continuar raro (cerca de 2 a 5% das partidas).
 - Estratégias gananciosas ("sempre mais dinheiro", "sempre mais reputação")
-  não podem chegar a *Took off* ou *Unicorn*.
+  **podem** chegar a *Took off* ou *Unicorn* de vez em quando: algumas
+  empresas de verdade decolam por meios escusos, e isso é realista. O
+  professor aceita até cerca de 1% dos sorteios (em set/2026, "sempre mais
+  reputação" estava em 1,14%). Não gaste rodadas de teste para zerar isso.
 - Se mudar qualquer regra de final, verifique que a lógica do jogo (JS) dá o
   mesmo resultado que a simulação (Python).
 

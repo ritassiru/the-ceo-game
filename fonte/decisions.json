@@ -670,5 +670,215 @@
    "phrase": "keep the price the same",
    "phrasePt": "manter o preço igual"
   }
+ },
+ {
+  "id": "offline",
+  "who": "lee",
+  "text": "Many users live in places with bad internet. If you create an [[offline|sem internet]] mode, they will use the app anywhere. But it will take a month of work.",
+  "a": {
+   "label": "Create an offline mode",
+   "cash": -10,
+   "rep": 15,
+   "result": "It took a month, but users in small towns loved the app and told their friends.",
+   "phrase": "create an offline mode",
+   "phrasePt": "criar um modo sem internet"
+  },
+  "b": {
+   "label": "Keep it online only",
+   "cash": 5,
+   "rep": -5,
+   "result": "You saved time, but many users in small towns stopped using the app.",
+   "phrase": "keep the app online only",
+   "phrasePt": "manter o app só on-line"
+  }
+ },
+ {
+  "id": "redesign",
+  "who": "lee",
+  "text": "Users hate the new [[design|visual do app]]. If you go back to the old design, you will lose two months of work. If you keep the new one, some users will leave.",
+  "a": {
+   "label": "Go back to the old design",
+   "cash": -10,
+   "rep": 10,
+   "result": "You lost two months of work, but users were happy again.",
+   "phrase": "go back to the old design",
+   "phrasePt": "voltar ao visual antigo"
+  },
+  "b": {
+   "label": "Keep the new design",
+   "cash": 5,
+   "rep": -10,
+   "result": "You saved time, but many users wrote angry comments, and some of them left.",
+   "phrase": "keep the new design",
+   "phrasePt": "manter o visual novo"
+  }
+ },
+ {
+  "id": "client",
+  "who": "lee",
+  "text": "Your biggest [[client|cliente]] wants a special feature only for them. If you build it, they will pay you a lot. But your other users will wait for two months.",
+  "a": {
+   "label": "Build it for the client",
+   "cash": 15,
+   "rep": -10,
+   "result": "The client paid very well, but your other users waited, and some of them complained.",
+   "phrase": "build a special feature for my biggest client",
+   "phrasePt": "criar uma funcionalidade só para o maior cliente"
+  },
+  "b": {
+   "label": "Put all users first",
+   "cash": -10,
+   "rep": 10,
+   "result": "The client paid less, but all your users got new features on time.",
+   "phrase": "put all my users first",
+   "phrasePt": "colocar todos os usuários em primeiro lugar"
+  }
+ },
+ {
+  "id": "pirated",
+  "who": "ana",
+  "text": "The programs we use are expensive. If we use [[pirated|piratas]] copies, we will save money. But if someone finds out, we will pay a big [[fine|multa]].",
+  "a": {
+   "label": "Use pirated copies",
+   "cash": 10,
+   "rep": -15,
+   "result": "You saved money for a few months. Then an old worker told a journalist, and people stopped trusting your company.",
+   "phrase": "use pirated programs",
+   "phrasePt": "usar programas piratas"
+  },
+  "b": {
+   "label": "Pay for the programs",
+   "cash": -10,
+   "rep": 10,
+   "result": "It was expensive, but big clients trusted your company because everything was legal.",
+   "phrase": "pay for the programs",
+   "phrasePt": "pagar pelos programas"
+  }
+ },
+ {
+  "id": "backup",
+  "who": "ana",
+  "text": "We don't have a [[backup|cópia de segurança]] of our users' files. If we pay for a backup, it will cost a little money every month. But if the system breaks, we will lose everything.",
+  "a": {
+   "label": "Pay for a backup",
+   "cash": -5,
+   "rep": 10,
+   "result": "It cost a little money every month. When a server broke in June, nobody lost anything, and users trusted you more.",
+   "phrase": "pay for a backup",
+   "phrasePt": "pagar por uma cópia de segurança"
+  },
+  "b": {
+   "label": "Save the money",
+   "cash": 5,
+   "rep": -15,
+   "result": "You saved money. Then the system broke one night, and many users lost their files.",
+   "phrase": "save money on the backup",
+   "phrasePt": "economizar na cópia de segurança"
+  }
+ },
+ {
+  "id": "suppliers",
+  "who": "ana",
+  "text": "This month is hard. If we pay our [[suppliers|fornecedores]] late, we will have more money now. But they will not want to work with us again.",
+  "a": {
+   "label": "Pay them late",
+   "cash": 10,
+   "rep": -10,
+   "result": "You had money for the month, but two suppliers stopped working with you.",
+   "phrase": "pay the suppliers late",
+   "phrasePt": "pagar os fornecedores com atraso"
+  },
+  "b": {
+   "label": "Pay on time",
+   "cash": -10,
+   "rep": 10,
+   "result": "Money was short that month, but your suppliers trusted you and gave you better prices later.",
+   "phrase": "pay the suppliers on time",
+   "phrasePt": "pagar os fornecedores em dia"
+  }
+ },
+ {
+  "id": "sponsor",
+  "who": "costa",
+  "text": "A [[soft drink|refrigerante]] company wants to put its logo in your app. If you accept, you will get a lot of money. But many of your users are teenagers, and parents will not like it.",
+  "a": {
+   "label": "Accept the deal",
+   "cash": 15,
+   "rep": -10,
+   "result": "The money helped a lot, but many parents complained on social media.",
+   "phrase": "accept the soft drink company's money",
+   "phrasePt": "aceitar o dinheiro da empresa de refrigerante"
+  },
+  "b": {
+   "label": "Say no to the deal",
+   "cash": -5,
+   "rep": 10,
+   "result": "You lost the money, but parents and schools liked your choice.",
+   "phrase": "say no to the soft drink company",
+   "phrasePt": "dizer não à empresa de refrigerante"
+  }
+ },
+ {
+  "id": "layoffs",
+  "who": "costa",
+  "text": "I can put more money in your company. But if you accept it, you will have to [[fire|demitir]] ten people. If you say no, you will keep your team.",
+  "a": {
+   "label": "Accept and fire ten people",
+   "cash": 20,
+   "rep": -15,
+   "result": "You got the money, but the team was sad and afraid. Two of your best engineers left too.",
+   "phrase": "accept the money and fire ten people",
+   "phrasePt": "aceitar o dinheiro e demitir dez pessoas"
+  },
+  "b": {
+   "label": "Keep the team",
+   "cash": -5,
+   "rep": 10,
+   "result": "Money was short, but your team worked harder than ever for you.",
+   "phrase": "keep my whole team",
+   "phrasePt": "manter a equipe inteira"
+  }
+ },
+ {
+  "id": "rival",
+  "who": "costa",
+  "text": "A small [[competitor|concorrente]] is for sale. If you buy it, you will get all its users. But it will be expensive, and you will have to fix its old app.",
+  "a": {
+   "label": "Buy the competitor",
+   "cash": -20,
+   "rep": 15,
+   "result": "Its users came to your app. Fixing the old app was hard and very expensive.",
+   "phrase": "buy the small competitor",
+   "phrasePt": "comprar o pequeno concorrente"
+  },
+  "b": {
+   "label": "Grow on your own",
+   "cash": 5,
+   "rep": -5,
+   "result": "You saved your money, but a bigger company bought your competitor.",
+   "phrase": "grow on my own",
+   "phrasePt": "crescer por conta própria"
+  }
+ },
+ {
+  "id": "crowdfunding",
+  "who": "costa",
+  "text": "Your fans want to help. If you start a [[crowdfunding|vaquinha on-line]] campaign, they will give you money. But if the [[rewards|recompensas]] arrive late, they will be angry.",
+  "a": {
+   "label": "Start the campaign",
+   "cash": 15,
+   "rep": -10,
+   "result": "Two thousand fans gave you money, but the rewards arrived late, and some fans complained.",
+   "phrase": "start a crowdfunding campaign",
+   "phrasePt": "fazer uma vaquinha on-line"
+  },
+  "b": {
+   "label": "Find money in other ways",
+   "cash": -5,
+   "rep": 5,
+   "result": "You didn't get extra money, but you never made promises that you couldn't keep.",
+   "phrase": "look for money in other ways",
+   "phrasePt": "procurar dinheiro de outras formas"
+  }
  }
 ]
