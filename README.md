@@ -17,7 +17,7 @@ Funciona no celular, sem instalar nada, e também sem internet.
 
 ## O que tem no jogo
 
-- **32 situações**, das quais 5 são sorteadas a cada partida, com três
+- **42 situações**, das quais 5 são sorteadas a cada partida, com três
   conselheiros: Ana (CFO), Mr. Lee (mentor) e Ms. Costa (investidora).
 - **Dois medidores**, 💰 Cash e ⭐ Reputation, que reagem a cada escolha.
 - **9 finais** em três faixas:
@@ -33,6 +33,9 @@ Funciona no celular, sem instalar nada, e também sem internet.
   limitado a 2 das 3 frases.
 - **Trava:** só dá para jogar de novo depois de escrever e conferir as 3 frases.
 - **Histórico** das últimas partidas.
+- **Configurações** (ícone de engrenagem, em todas as telas): glossário
+  ligado/desligado, cores (automático, claro ou escuro), tamanho do texto e
+  animações. Ficam guardadas no próprio aparelho.
 
 ## Como usar em aula
 
