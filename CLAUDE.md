@@ -77,7 +77,7 @@ em largura de celular, para conferir.
   **podem** chegar a *Took off* ou *Unicorn* de vez em quando: algumas
   empresas de verdade decolam por meios escusos, e isso é realista. O
   professor aceita até cerca de 1% dos sorteios (em set/2026, "sempre mais
-  reputação" estava em 1,14%). Não gaste rodadas de teste para zerar isso.
+  reputação" estava em 1,14%; com 52 situações, em 1,00%). Não gaste rodadas de teste para zerar isso.
   Já se tentou (set/2026) fazer "sempre mais dinheiro" também decolar, dando
   reputação a opções duvidosas: não funciona sem quebrar a garantia das três
   faixas e inflar o Unicórnio. O professor decidiu deixar como está. A única

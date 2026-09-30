@@ -17,7 +17,7 @@ Funciona no celular, sem instalar nada, e também sem internet.
 
 ## O que tem no jogo
 
-- **42 situações**, das quais 5 são sorteadas a cada partida, com três
+- **52 situações**, das quais 5 são sorteadas a cada partida, com três
   conselheiros: Ana (CFO), Mr. Lee (mentor) e Ms. Costa (investidora).
 - **Dois medidores**, 💰 Cash e ⭐ Reputation, que reagem a cada escolha.
 - **9 finais** em três faixas:

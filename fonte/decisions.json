@@ -880,5 +880,215 @@
    "phrase": "look for money in other ways",
    "phrasePt": "procurar dinheiro de outras formas"
   }
+ },
+ {
+  "id": "kids",
+  "who": "lee",
+  "text": "Many children under 13 are using the app. If you ask for their parents' [[permission|permissão]], some kids will leave. If you don't ask, the law will be a problem.",
+  "a": {
+   "label": "Ask for parents' permission",
+   "cash": -10,
+   "rep": 15,
+   "result": "Some kids left, but parents and schools trusted your app much more.",
+   "phrase": "ask for the parents' permission",
+   "phrasePt": "pedir a permissão dos pais"
+  },
+  "b": {
+   "label": "Let them use it",
+   "cash": 10,
+   "rep": -10,
+   "result": "You kept all the users, but a TV [[report|reportagem]] said your app was not safe for children.",
+   "phrase": "let young children use the app",
+   "phrasePt": "deixar crianças pequenas usarem o app"
+  }
+ },
+ {
+  "id": "moderators",
+  "who": "lee",
+  "text": "Some users are posting [[fake news|notícias falsas]] in the app. If you hire [[moderators|moderadores]], they will remove the bad posts. But it will be expensive.",
+  "a": {
+   "label": "Hire moderators",
+   "cash": -15,
+   "rep": 15,
+   "result": "The moderators removed the fake news, and users felt safe in the app again.",
+   "phrase": "hire moderators",
+   "phrasePt": "contratar moderadores"
+  },
+  "b": {
+   "label": "Let users report posts",
+   "cash": 5,
+   "rep": -10,
+   "result": "You saved money, but the fake news stayed online for days, and people blamed your app.",
+   "phrase": "let users report the bad posts",
+   "phrasePt": "deixar os usuários denunciarem as postagens"
+  }
+ },
+ {
+  "id": "bugbounty",
+  "who": "lee",
+  "text": "A student found a big [[bug|erro no programa]] and told us about it. If you give him a [[reward|recompensa]], other people will help you too.",
+  "a": {
+   "label": "Pay him a reward",
+   "cash": -10,
+   "rep": 10,
+   "result": "The student posted about the reward, and many programmers started to look for bugs in your app.",
+   "phrase": "pay the student a reward",
+   "phrasePt": "pagar uma recompensa ao aluno"
+  },
+  "b": {
+   "label": "Just say thank you",
+   "cash": 0,
+   "rep": -5,
+   "result": "You fixed the bug, but the student felt that your company didn't value his help.",
+   "phrase": "just say thank you to the student",
+   "phrasePt": "só agradecer ao aluno"
+  }
+ },
+ {
+  "id": "fourday",
+  "who": "ana",
+  "text": "The team wants to work four days a week. If we try it, the team will be happier. But we will work less, and that will cost money.",
+  "a": {
+   "label": "Try a four-day week",
+   "cash": -10,
+   "rep": 15,
+   "result": "The team was happier and more creative, and many good programmers wanted to work with you.",
+   "phrase": "try a four-day week",
+   "phrasePt": "testar a semana de quatro dias"
+  },
+  "b": {
+   "label": "Keep five days",
+   "cash": 5,
+   "rep": -5,
+   "result": "The work continued as usual, but some people in the team were disappointed.",
+   "phrase": "keep the five-day week",
+   "phrasePt": "manter a semana de cinco dias"
+  }
+ },
+ {
+  "id": "overtime",
+  "who": "ana",
+  "text": "The team worked all weekend to finish a project. If we pay them extra money, we will spend more this month. If we don't, they will be angry.",
+  "a": {
+   "label": "Pay them extra",
+   "cash": -10,
+   "rep": 10,
+   "result": "It was expensive, but the team felt respected and worked with more energy.",
+   "phrase": "pay the team extra money",
+   "phrasePt": "pagar um valor extra à equipe"
+  },
+  "b": {
+   "label": "Give a day off later",
+   "cash": 0,
+   "rep": -5,
+   "result": "You saved money, but the team was tired and a little angry for weeks.",
+   "phrase": "give the team a day off later",
+   "phrasePt": "dar uma folga à equipe depois"
+  }
+ },
+ {
+  "id": "donation",
+  "who": "ana",
+  "text": "A public school needs computers. If we [[donate|doar]] our old computers, we will not sell them. But the students will be very happy.",
+  "a": {
+   "label": "Donate the computers",
+   "cash": -10,
+   "rep": 15,
+   "result": "The students loved the computers, and the local news talked about your company.",
+   "phrase": "donate the old computers",
+   "phrasePt": "doar os computadores antigos"
+  },
+  "b": {
+   "label": "Sell the computers",
+   "cash": 5,
+   "rep": -5,
+   "result": "You got a little money, but you lost a good chance to help your city.",
+   "phrase": "sell the old computers",
+   "phrasePt": "vender os computadores antigos"
+  }
+ },
+ {
+  "id": "betting",
+  "who": "costa",
+  "text": "A [[betting|apostas]] company wants to put ads in your app. If you accept, you will earn a lot of money. But many of your users are young, and parents will worry.",
+  "a": {
+   "label": "Accept the betting ads",
+   "cash": 15,
+   "rep": -15,
+   "result": "The money was good, but teachers and parents told young people to delete your app.",
+   "phrase": "accept the betting ads",
+   "phrasePt": "aceitar os anúncios de apostas"
+  },
+  "b": {
+   "label": "Say no to the ads",
+   "cash": 0,
+   "rep": 5,
+   "result": "You didn't get the money, but families saw your app as a safe place.",
+   "phrase": "say no to the betting company",
+   "phrasePt": "dizer não à empresa de apostas"
+  }
+ },
+ {
+  "id": "merge",
+  "who": "costa",
+  "text": "Another startup wants to join your company. If you [[merge|juntar as empresas]], you will have more money and more users. But you will share all your decisions.",
+  "a": {
+   "label": "Merge the companies",
+   "cash": 20,
+   "rep": -10,
+   "result": "You had more money, but the two teams argued a lot, and some users didn't like the changes.",
+   "phrase": "merge with the other startup",
+   "phrasePt": "juntar-se à outra startup"
+  },
+  "b": {
+   "label": "Stay alone",
+   "cash": -5,
+   "rep": 5,
+   "result": "You grew more slowly, but your users liked that the app stayed the same.",
+   "phrase": "stay alone",
+   "phrasePt": "continuar sozinho"
+  }
+ },
+ {
+  "id": "hackathon",
+  "who": "costa",
+  "text": "IFAL wants to organize a [[hackathon|maratona de programação]]. If you pay for the food and the prizes, you will meet the best young programmers in the city.",
+  "a": {
+   "label": "Sponsor the hackathon",
+   "cash": -10,
+   "rep": 10,
+   "result": "The event was a success, and you hired two great programmers.",
+   "phrase": "sponsor the hackathon",
+   "phrasePt": "patrocinar a maratona de programação"
+  },
+  "b": {
+   "label": "Save the money",
+   "cash": 5,
+   "rep": -5,
+   "result": "You kept your money, but another startup sponsored the event and hired the best students.",
+   "phrase": "save the money for later",
+   "phrasePt": "guardar o dinheiro para depois"
+  }
+ },
+ {
+  "id": "music",
+  "who": "costa",
+  "text": "Users want music in their videos. If you pay for the [[rights|direitos autorais]], it will be very expensive. If you use songs without permission, the artists will [[sue|processar]] you.",
+  "a": {
+   "label": "Pay for the music",
+   "cash": -10,
+   "rep": 10,
+   "result": "It was expensive, but artists shared your app, and users made great videos.",
+   "phrase": "pay for the music rights",
+   "phrasePt": "pagar pelos direitos das músicas"
+  },
+  "b": {
+   "label": "Use songs without permission",
+   "cash": 5,
+   "rep": -15,
+   "result": "It was free for a month. Then two famous artists went to court, and it was in the news.",
+   "phrase": "use songs without permission",
+   "phrasePt": "usar músicas sem permissão"
+  }
  }
 ]
