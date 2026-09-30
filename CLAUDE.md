@@ -129,7 +129,9 @@ em largura de celular, para conferir.
   o prefixo do cache (`ceo-game-` / `story-shelf-`) impede um de apagar o do
   outro. Ícones: `python3 fonte/icones.py` (sem dependências). O navegador
   embutido do app do Claude **não aceita service workers**: teste no Chrome.
-- **My words:** toda palavra cujo balão o aluno abre fica guardada no aparelho
+- **My words:** o cartão aparece **sempre** na tela inicial e no fim, mesmo vazio
+  (aí explica como funciona e esconde o botão de revisão): escondido, ninguém
+  descobria o recurso. Toda palavra cujo balão o aluno abre fica guardada no aparelho
   (`ceo-game-words`), com a tradução (verbos com as formas). O cartão *My words* aparece
   no fim da partida (só as palavras daquela partida, pelo `state.t0`) e
   na tela inicial, e a revisão em cartões abre no mesmo painel das configurações
