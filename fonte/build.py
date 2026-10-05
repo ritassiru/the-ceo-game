@@ -24,7 +24,7 @@ FACES = [
 
 # palavras que o glossário Beginner não traduz de propósito: básicas demais ou nomes próprios
 SEM_A1 = {"a", "an", "the", "i", "you", "it", "is", "are", "am", "to", "and", "of", "in", "on", "at",
-          "argentina", "brazil", "costa", "ifal"}
+          "alagoas", "argentina", "brazil", "costa", "ifal"}
 
 def palavras_sem_a1(D, A1, cognatos):
     """Palavras das falas e resultados que não têm tradução no nível A1."""

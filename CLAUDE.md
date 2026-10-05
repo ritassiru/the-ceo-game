@@ -77,7 +77,7 @@ em largura de celular, para conferir.
   **podem** chegar a *Took off* ou *Unicorn* de vez em quando: algumas
   empresas de verdade decolam por meios escusos, e isso é realista. O
   professor aceita até cerca de 1% dos sorteios (em set/2026, "sempre mais
-  reputação" estava em 1,14%; com 52 situações, em 1,00%). Não gaste rodadas de teste para zerar isso.
+  reputação" estava em 1,14%; com 52 situações, em 1,00%; com 60, em 1,22%). Não gaste rodadas de teste para zerar isso.
   Já se tentou (set/2026) fazer "sempre mais dinheiro" também decolar, dando
   reputação a opções duvidosas: não funciona sem quebrar a garantia das três
   faixas e inflar o Unicórnio. O professor decidiu deixar como está. A única
@@ -150,7 +150,7 @@ em largura de celular, para conferir.
   be*), *would to*, *would* + *-ing* ou passado (*would hired/bought*) e presente
   depois de *if* (*If I have/am/can*). *If I was* e a falta de vírgula depois do
   *If* **passam**, com dica. Toda frase que o montador forma precisa passar sem
-  erro: se mudar a checagem ou uma `phrase`, teste as 1.008 combinações.
+  erro: se mudar a checagem ou uma `phrase`, teste todas as combinações (com 60 situações, 1.512 frases).
 - Tudo que usa `localStorage` fica dentro de `try/catch`: o jogo precisa
   funcionar mesmo se o navegador bloquear o armazenamento.
 - Texto digitado pelo aluno (nome da startup) sempre passa por `esc()`.

@@ -1090,5 +1090,173 @@
    "phrase": "use songs without permission",
    "phrasePt": "usar músicas sem permissão"
   }
+ },
+ {
+  "id": "notifications",
+  "who": "lee",
+  "text": "If you send more [[notifications|notificações]] every day, users will open the app more often. But if they get too many messages, some of them will delete the app.",
+  "a": {
+   "label": "Send five notifications a day",
+   "cash": 10,
+   "rep": -10,
+   "result": "People opened the app more, and you sold more. But many users got angry and deleted the app.",
+   "phrase": "send five notifications a day",
+   "phrasePt": "mandar cinco notificações por dia"
+  },
+  "b": {
+   "label": "Send only important ones",
+   "cash": -5,
+   "rep": 10,
+   "result": "Users liked the quiet app and trusted your messages, but they opened it less often.",
+   "phrase": "send only important notifications",
+   "phrasePt": "mandar só as notificações importantes"
+  }
+ },
+ {
+  "id": "demo",
+  "who": "lee",
+  "text": "Next week, you will present the app at a big tech event. The new feature isn't ready yet. If you show it anyway, people will love it. But if it doesn't work later, they will feel [[cheated|enganados]].",
+  "a": {
+   "label": "Show the unfinished feature",
+   "cash": 10,
+   "rep": -15,
+   "result": "The audience loved the new feature. But it took four more months to finish it, and many people felt cheated.",
+   "phrase": "show the unfinished feature at the event",
+   "phrasePt": "mostrar a funcionalidade inacabada no evento"
+  },
+  "b": {
+   "label": "Show only what works",
+   "cash": -5,
+   "rep": 10,
+   "result": "Your presentation was simple, but everything worked. People said that your company was honest.",
+   "phrase": "show only the features that work",
+   "phrasePt": "mostrar só as funcionalidades que funcionam"
+  }
+ },
+ {
+  "id": "delete",
+  "who": "lee",
+  "text": "Some users want to delete their accounts, but the button is hard to find. If you make it easy, some users will leave. If you hide it, people will feel [[trapped|presos]].",
+  "a": {
+   "label": "Make it easy to leave",
+   "cash": -5,
+   "rep": 15,
+   "result": "A few users left, but many people said: “This company respects us.” New users arrived.",
+   "phrase": "make it easy to delete an account",
+   "phrasePt": "facilitar a exclusão da conta"
+  },
+  "b": {
+   "label": "Keep the button hidden",
+   "cash": 5,
+   "rep": -15,
+   "result": "You kept more users for a while. Then a journalist wrote about the hidden button, and people got angry.",
+   "phrase": "keep the delete button hidden",
+   "phrasePt": "manter o botão de excluir escondido"
+  }
+ },
+ {
+  "id": "equalpay",
+  "who": "ana",
+  "text": "Two of our programmers do the same job, but the woman earns less than the man. If we pay them the same, we will spend more every month.",
+  "a": {
+   "label": "Pay them the same",
+   "cash": -10,
+   "rep": 15,
+   "result": "You fixed the salaries. The team was proud of the company, and good programmers wanted to work with you.",
+   "phrase": "pay the same salary for the same job",
+   "phrasePt": "pagar o mesmo salário pelo mesmo trabalho"
+  },
+  "b": {
+   "label": "Change nothing",
+   "cash": 5,
+   "rep": -15,
+   "result": "You saved money. But the programmer found out, left the company and told her story online.",
+   "phrase": "change nothing in the salaries",
+   "phrasePt": "não mudar nada nos salários"
+  }
+ },
+ {
+  "id": "course",
+  "who": "ana",
+  "text": "The team wants an English course. If we pay for it, it will cost a lot this year. But if they speak English, they will talk to clients from other countries.",
+  "a": {
+   "label": "Pay for the course",
+   "cash": -10,
+   "rep": 10,
+   "result": "The team studied English for a year. It was expensive, but now they talk to clients from many countries.",
+   "phrase": "pay for an English course for the team",
+   "phrasePt": "pagar um curso de inglês para a equipe"
+  },
+  "b": {
+   "label": "Use online translators",
+   "cash": 5,
+   "rep": -5,
+   "result": "You saved money, but some messages to clients were strange, and a few clients didn't understand you.",
+   "phrase": "use online translators",
+   "phrasePt": "usar tradutores on-line"
+  }
+ },
+ {
+  "id": "refund",
+  "who": "ana",
+  "text": "The app stopped working for a whole day. Some users want their money back. If we give a [[refund|reembolso]], we will lose money. If we say no, they will complain everywhere.",
+  "a": {
+   "label": "Give the refund",
+   "cash": -10,
+   "rep": 15,
+   "result": "You gave the money back and said sorry. Users were surprised, and many of them stayed with you.",
+   "phrase": "give the users a refund",
+   "phrasePt": "devolver o dinheiro aos usuários"
+  },
+  "b": {
+   "label": "Say no",
+   "cash": 5,
+   "rep": -10,
+   "result": "You kept the money, but angry users wrote bad reviews for weeks.",
+   "phrase": "refuse to give a refund",
+   "phrasePt": "recusar o reembolso"
+  }
+ },
+ {
+  "id": "move",
+  "who": "costa",
+  "text": "Your company is growing. If you move to a big city in the south, you will meet more investors. But if you leave Alagoas, many people on your team will not go with you.",
+  "a": {
+   "label": "Move to a big city",
+   "cash": 15,
+   "rep": -10,
+   "result": "You met many investors in the big city. But half of your team stayed in Alagoas, and you had to hire new people.",
+   "phrase": "move the company to a big city",
+   "phrasePt": "mudar a empresa para uma cidade grande"
+  },
+  "b": {
+   "label": "Stay in Alagoas",
+   "cash": -5,
+   "rep": 10,
+   "result": "You stayed with your team and created jobs in your state. But you traveled a lot to meet investors.",
+   "phrase": "stay in Alagoas with the team",
+   "phrasePt": "ficar em Alagoas com a equipe"
+  }
+ },
+ {
+  "id": "city",
+  "who": "costa",
+  "text": "The city wants to use your app on its buses. If you accept, many people will use your app every day. But the city pays very late, and the project will take all your time.",
+  "a": {
+   "label": "Accept the city project",
+   "cash": -15,
+   "rep": 15,
+   "result": "Thousands of people used your app on the buses. But the city paid six months late, and money was short.",
+   "phrase": "accept the project with the city",
+   "phrasePt": "aceitar o projeto com a prefeitura"
+  },
+  "b": {
+   "label": "Say no to the city",
+   "cash": 5,
+   "rep": -5,
+   "result": "You kept working with your own clients. The money was regular, but the city chose another app.",
+   "phrase": "say no to the city",
+   "phrasePt": "dizer não à prefeitura"
+  }
  }
 ]
