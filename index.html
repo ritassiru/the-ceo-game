@@ -81,6 +81,7 @@ p { margin: 0 0 12px; }
 }
 .gear svg { width: 22px; height: 22px; }
 .gear:hover { border-color: var(--rose); }
+.kwbtn { font-size: 1.15rem; line-height: 1; }
 .gear:focus-visible { outline: 3px solid var(--rep); outline-offset: 2px; }
 .no-gloss .gloss { text-decoration: none; cursor: inherit; pointer-events: none; }
 
@@ -417,8 +418,9 @@ function gaugesHTML() {
     <div class="gauge rep" id="g-rep"><div class="g-row"><span>⭐ Reputation</span><b id="v-rep">${state.rep}</b></div><div class="track"><div class="fill" id="f-rep" style="width:${state.rep}%"></div></div></div>
   </div>`;
 }
-function topHTML(stepText) {
-  return `<div class="top"><div class="brand">${esc(state.name)}</div><div class="top-r"><div class="step">${stepText}</div>${gearButton()}</div></div>`;
+// kw: atalho 📖 para as palavras-chave (fica de fora só na própria tela das palavras-chave)
+function topHTML(stepText, kw = true) {
+  return `<div class="top"><div class="brand">${esc(state.name)}</div><div class="top-r"><div class="step">${stepText}</div>${kw ? kwButton() : ""}${gearButton()}</div></div>`;
 }
 function sceneHTML(who, mood) {
   return `<div class="scene"><div class="window"></div>${PLANT}${avatar(who, mood)}</div>`;
@@ -461,17 +463,25 @@ const KEY_WORDS = [
   ["Actions", "ações", [["🤝", "hire", "contratar"], ["🌱", "grow", "crescer"], ["🔒", "keep", "manter"]]]
 ];
 
-function screenVocab() {
+/* palavras-chave: na tela antes do jogo e no atalho 📖 (abre por cima, no painel das configurações, sem mexer na partida) */
+const kwHTML = () => {
   const past = w => { const v = IRREG.find(x => x[0] === w); return v ? `<span class="kw-past">past: ${esc(v[1])}</span>` : ""; };
-  $("#app").innerHTML = topHTML("Before you start") + `
-    <div class="card">
-      <h2>Key words</h2>
-      <p class="hint">Palavras importantes do jogo. Leia antes de começar.</p>
-      ${KEY_WORDS.map(([g, gpt, words]) => `
+  return KEY_WORDS.map(([g, gpt, words]) => `
         <p class="kw-g">${g} <span>· ${gpt}</span></p>
         <div class="kw-grid">${words.map(([e, en, pt]) => `
           <div class="kw"><span class="kw-e" aria-hidden="true">${e}</span><div><b>${en}</b><span class="kw-pt">${pt}</span>${past(en)}</div></div>`).join("")}
-        </div>`).join("")}
+        </div>`).join("");
+};
+const kwButton = () => `<button type="button" class="gear kwbtn" id="kwbtn" aria-label="Key words · palavras-chave" title="Key words · palavras-chave" aria-haspopup="dialog"><span aria-hidden="true">📖</span></button>`;
+const kwSheet = () => `<div class="sheet" role="dialog" aria-modal="true" aria-labelledby="st-t"><h2 id="st-t">📖 Key words <span>· palavras-chave</span></h2>
+  ${kwHTML()}<button type="button" class="btn center" id="st-close" style="margin-top:14px">Done <span>· pronto</span></button></div>`;
+
+function screenVocab() {
+  $("#app").innerHTML = topHTML("Before you start", false) + `
+    <div class="card">
+      <h2>Key words</h2>
+      <p class="hint">Palavras importantes do jogo. Leia antes de começar. Durante o jogo, o botão 📖 no alto da tela mostra estas palavras de novo.</p>
+      ${kwHTML()}
       <div class="model kw-tip">
         Your team will warn you like this:<br>
         <b>If</b> you hire five engineers, we <b>will</b> spend all our money.<br>
@@ -997,6 +1007,8 @@ function closeSettings() {
 }
 document.addEventListener("click", (e) => {
   if (e.target.closest("#gear")) { openSettings(); return; }
+  // o foco vai para o "Done" (último botão): a lista volta para o começo
+  if (e.target.closest("#kwbtn")) { openSheet(kwSheet()); $("#settings").scrollTop = 0; return; }
   if (e.target.closest("#w-review")) { openWords(); return; }
   const o = $("#settings");
   if (o.hidden) return;
