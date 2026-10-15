@@ -89,7 +89,11 @@ em largura de celular, para conferir.
 
 - 5 situações sorteadas por partida; os dois botões têm o **mesmo estilo** e a
   ordem é embaralhada a cada decisão.
-- Tela de palavras-chave antes do jogo.
+- Tela de palavras-chave antes do jogo, e **atalho 📖** no topo das outras telas
+  da partida (`topHTML(..., kw)`, ao lado da engrenagem): abre as mesmas palavras
+  (`kwHTML()`) por cima, no painel das configurações (`openSheet`), sem mexer na
+  partida nem na trava do *Play again*. Mesmo código, com os mesmos nomes, no
+  `story-shelf` e no `my-busy-week`.
 - Glossário sublinhado só na **primeira ocorrência de cada palavra por tela**;
   o balão abre acima da palavra e não pode cobrir nem bloquear botões.
 - **Engrenagem de configurações** na barra do topo de todas as telas (inclusive
