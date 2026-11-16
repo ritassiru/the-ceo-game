@@ -178,6 +178,13 @@ input[type=text], textarea {
 }
 textarea { min-height: 76px; resize: vertical; }
 .err { color: var(--bad); font-size: 0.95rem; min-height: 1.4em; margin: 6px 0 0; }
+/* quem joga (nome e turma) e o código de resultado */
+.tur-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 12px; }
+.tur { border: 3px solid var(--line); border-radius: 999px; padding: 6px 12px; background: var(--panel); color: var(--ink); font: inherit; font-size: .92rem; cursor: pointer; }
+.tur[aria-pressed="true"] { border-color: var(--berry); font-weight: 700; }
+.tur:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.code-card { margin-top: 12px; padding: 12px; border: 2px dashed var(--line); border-radius: 12px; text-align: center; }
+.code { font: 700 1.25rem ui-monospace, Consolas, monospace; letter-spacing: .04em; color: var(--berry); margin: 4px 0; overflow-wrap: anywhere; }
 .ending-emoji { font-size: 3.2rem; line-height: 1; margin-bottom: 6px; }
 .ending.tier0 { border-top: 6px solid var(--bad); }
 .ending.tier1 { border-top: 6px solid var(--rep); }
@@ -411,6 +418,22 @@ function outcome() {
   return "stuck";
 }
 
+/* ---------------- quem joga: nome e turma (ficam no aparelho; a turma entra no código de resultado) ---------------- */
+// o mesmo perfil do my-busy-week e do story-shelf ("week:profile"), porque é o mesmo site
+const TURMAS = [...[{"id": "I2M", "nome": "INFO 2º ano · matutino"}, {"id": "I2V", "nome": "INFO 2º ano · vespertino"}, {"id": "A3V", "nome": "ADM 3º ano · vespertino"}, {"id": "I1M", "nome": "INFO 1º ano · matutino"}, {"id": "I1V", "nome": "INFO 1º ano · vespertino"}, {"id": "A2V", "nome": "ADM 2º ano · vespertino"}], { id: "OUT", nome: "Outra turma · visitante" }];
+const turmaBy = id => TURMAS.find(t => t.id === id);
+const loadMe = () => { try { const p = JSON.parse(localStorage.getItem("week:profile") || "null"); return p && typeof p === "object" ? p : {}; } catch (e) { return {}; } };
+const saveMe = p => { try { localStorage.setItem("week:profile", JSON.stringify(p)); } catch (e) { /* sem armazenamento */ } };
+let me = loadMe();   // também fica na memória, para o jogo funcionar sem armazenamento
+const meLine = () => (me.name && turmaBy(me.turma) ? `${me.name} · ${turmaBy(me.turma).nome}` : "");
+// código de resultado de uma partida com as 3 frases prontas: CG-TUR-final-caixa-reputação-ajudas-X
+// (final = posição em ENDING_ORDER, de 1 a 9; caixa e reputação com 3 dígitos; ajudas = frases montadas; X = conferência)
+function resultCode() {
+  const z = v => String(Math.round(v)).padStart(3, "0");
+  const body = `CG-${turmaBy(me.turma) ? me.turma : "OUT"}-${ENDING_ORDER.indexOf(state.ended) + 1}-${z(state.cash)}-${z(state.rep)}-${helped.size}`;
+  return body + "-" + String.fromCharCode(65 + [...body].reduce((s, c) => s + c.charCodeAt(0), 0) % 26);
+}
+
 /* ---------------- screens ---------------- */
 function gaugesHTML() {
   return `<div class="gauges">
@@ -432,14 +455,25 @@ function screenStart() {
       <h1>The CEO Game</h1>
       <p>You are the CEO of a new startup. Your team will ask you to make ${ROUNDS} big decisions. Listen to their advice, and choose carefully.</p>
       <p class="hint">Toque nas palavras sublinhadas para ver a tradução. Nos verbos irregulares (sublinhado tracejado), você vê também as três formas: infinitive, past e participle.</p>
+      <label class="lbl" for="me-name">My name <span class="hint">· meu nome</span></label>
+      <input type="text" id="me-name" maxlength="16" autocomplete="off" value="${esc(me.name || "")}">
+      <p class="lbl" style="margin-top:12px">My class <span class="hint">· minha turma</span></p>
+      <div class="tur-row" role="group" aria-label="My class · minha turma">${TURMAS.map(t => `<button type="button" class="tur" data-tur="${esc(t.id)}" aria-pressed="${me.turma === t.id}">${esc(t.nome)}</button>`).join("")}</div>
+      <p class="hint">O nome fica só neste aparelho. A turma entra no código de resultado, que você copia para o professor. Nada é enviado.</p>
       <label class="lbl" for="nm">What's the name of your startup?</label>
       <input type="text" id="nm" maxlength="28" autocomplete="off" placeholder="e.g. FoodBox" value="${esc(state.name)}">
       <p class="err" id="nm-err"></p>
       <button class="btn center" id="go">Start the game</button>
     </div>` + wordsHomeHTML() + historyHTML();
+  let tur = turmaBy(me.turma) ? me.turma : "";
+  document.querySelectorAll("[data-tur]").forEach(b => b.onclick = () => { tur = b.dataset.tur; $("#nm-err").textContent = "";
+    document.querySelectorAll("[data-tur]").forEach(x => x.setAttribute("aria-pressed", x === b)); });
   const go = () => {
-    const v = $("#nm").value.trim();
+    const quem = $("#me-name").value.trim().replace(/\s+/g, " "), v = $("#nm").value.trim();
+    if (!/^[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ' -]{0,15}$/.test(quem)) { $("#nm-err").textContent = "Escreva o seu nome (só letras)."; $("#me-name").focus(); return; }
+    if (!turmaBy(tur)) { $("#nm-err").textContent = "Escolha a sua turma."; return; }
     if (!v) { $("#nm-err").textContent = "Type a name for your startup to start."; $("#nm").focus(); return; }
+    me = Object.assign({}, loadMe(), { name: quem, turma: tur }); saveMe(me);
     state.name = v; newGame(true); screenVocab();
   };
   $("#go").onclick = go;
@@ -703,7 +737,7 @@ function screenReflect() {
       <p class="hint help-rule">Você pode usar o <b>Help me write</b> em até 2 frases. Pelo menos 1 frase precisa ser escrita por você.</p>
       ${[1, 2, 3].map(n => `<div class="sent"><label class="lbl" for="s${n}">Sentence ${n} <span class="tag" id="tag${n}" hidden>montada com ajuda</span></label><textarea id="s${n}" placeholder="If I..., I would..."></textarea><div class="fb" id="fb${n}"></div><button type="button" class="help-btn" data-n="${n}" aria-expanded="false">Help me write <span>· monte a frase com ajuda</span></button><p class="own" id="own${n}" hidden>Esta frase é sua: escreva sem o montador. Use o modelo lá em cima e as palavras das suas outras frases.</p><div class="builder" id="b${n}" hidden></div></div>`).join("")}
       <button class="btn center" id="check">Check my sentences</button>
-      <p class="done" id="done" hidden></p>
+      <p class="done" id="done" hidden></p><div class="code-card" id="code-card" hidden></div>
       <p class="hint" style="margin-top:12px">When your three sentences are OK, copy them into your notebook and show them to your teacher.</p>
     </div>
     ${wordsCardHTML(state.t0 || 0)}
@@ -721,7 +755,11 @@ function screenReflect() {
       const own = 3 - helped.size;
       done.textContent = `All three sentences are OK! Copy them into your notebook. (${helped.size} com ajuda, ${own} ${own === 1 ? "escrita" : "escritas"} por você)`;
       done.hidden = false;
-    } else done.hidden = true;
+      const cc = $("#code-card");
+      cc.innerHTML = `<p class="lbl" style="margin:0">Result code <span class="hint">· código de resultado</span></p>${meLine() ? `<p class="hint" style="margin:0"><b>${esc(meLine())}</b></p>` : ""}
+        <p class="code">${resultCode()}</p><p class="hint" style="margin:0">Copie este código junto com as suas frases: ele mostra ao professor como foi a sua partida.</p>`;
+      cc.hidden = false;
+    } else { done.hidden = true; $("#code-card").hidden = true; }
   };
   $("#again").onclick = () => { if ($("#again").disabled) return; newGame(true); screenStart(); };
   document.querySelectorAll(".help-btn").forEach(btn => btn.onclick = () => openBuilder(+btn.dataset.n));
@@ -729,7 +767,7 @@ function screenReflect() {
   [1, 2, 3].forEach(n => $("#s" + n).addEventListener("input", () => {
     // só apagar o campo inteiro devolve a ajuda; editar uma frase montada não conta como "escrita por você"
     if ($("#s" + n).value.trim() === "" && helped.delete(n)) updateHelpUI();
-    $("#done").hidden = true;
+    $("#done").hidden = true; $("#code-card").hidden = true;
     lockAgain(true);   // mudou uma frase: precisa conferir de novo
   }));
   updateHelpUI();

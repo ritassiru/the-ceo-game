@@ -1,0 +1,26 @@
+[
+ {
+  "id": "I2M",
+  "nome": "INFO 2º ano · matutino"
+ },
+ {
+  "id": "I2V",
+  "nome": "INFO 2º ano · vespertino"
+ },
+ {
+  "id": "A3V",
+  "nome": "ADM 3º ano · vespertino"
+ },
+ {
+  "id": "I1M",
+  "nome": "INFO 1º ano · matutino"
+ },
+ {
+  "id": "I1V",
+  "nome": "INFO 1º ano · vespertino"
+ },
+ {
+  "id": "A2V",
+  "nome": "ADM 2º ano · vespertino"
+ }
+]

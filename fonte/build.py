@@ -67,7 +67,8 @@ def main():
     html = (t.replace("__DECISIONS__", json.dumps(D, ensure_ascii=False))
              .replace("__IRREG__", json.dumps(load("irreg.json"), ensure_ascii=False))
              .replace("__PARAMS__", json.dumps(load("endings_params.json")))
-             .replace("__A1__", json.dumps(A1, ensure_ascii=False)))
+             .replace("__A1__", json.dumps(A1, ensure_ascii=False))
+             .replace("__TURMAS__", json.dumps(load("turmas.json"), ensure_ascii=False)))
     out = os.path.join(HERE, "..", "index.html")
     open(out, "w", encoding="utf-8").write(html)
     print(f"index.html gerado: {len(D)} decisões, {len(html.encode()) // 1024} KB")
@@ -77,8 +78,93 @@ def main():
     from qr import pagina_professor
     pag = pagina_professor("The CEO Game", "2º ano · First and second conditional · Ensino Médio Integrado (IFAL)",
                            [("The CEO Game", "2º ano · First and second conditional", URL)])
+    # o decodificador dos códigos de resultado entra depois do QR code (sem mexer no qr.py, que é o mesmo nos projetos)
+    assert "</main>" in pag and "</head>" in pag
+    pag = pag.replace("</main>", decodificador(t, load("turmas.json")) + "</main>", 1).replace("</head>", DEC_CSS + "</head>", 1)
     open(os.path.join(HERE, "..", "professor.html"), "w", encoding="utf-8", newline="\n").write(pag)
-    print("professor.html gerado (QR code do jogo)")
+    print("professor.html gerado (QR code do jogo e decodificador)")
+
+# ---------------- decodificador do código de resultado (na professor.html) ----------------
+# O código é CG-TUR-final-caixa-reputação-ajudas-X (o mesmo resultCode() do template): X é a letra de conferência,
+# 65 + (soma dos códigos dos caracteres do corpo) mod 26. Se mudar lá, mude aqui.
+DEC_CSS = """<style>
+.dec { margin-top: 26px; }
+.dec textarea { width: 100%; box-sizing: border-box; min-height: 120px; font: 1rem ui-monospace, Consolas, monospace; color: var(--ink); background: var(--panel); border: 2px solid var(--line); border-radius: 10px; padding: 10px; }
+.dec table { width: 100%; border-collapse: collapse; margin: 12px 0; background: var(--panel); font-size: .95rem; }
+.dec th, .dec td { border: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; }
+.dec th { color: var(--berry); }
+.dec .err { color: #B0413E; font-weight: 700; }
+.dec .tab { overflow-x: auto; }
+@media print { .dec { display: none; } }
+</style>
+"""
+
+def decodificador(template, turmas):
+    """Os nomes dos 9 finais saem do próprio template (ENDINGS e ENDING_ORDER), para não ficarem em dois lugares."""
+    ordem = json.loads(re.search(r"const ENDING_ORDER = (\[[^\]]+\]);", template).group(1))
+    bloco = template[template.index("const ENDINGS = {"):template.index("const ENDING_ORDER")]
+    fins = []
+    for k in ordem:
+        m = re.search(r'\b' + k + r':\s*\{ tier: (\d), emoji: "([^"]+)", short: "([^"]+)"', bloco)
+        assert m, f"final {k} não encontrado em ENDINGS"
+        fins.append({"tier": int(m.group(1)), "nome": f"{m.group(2)} {m.group(3)}"})
+    nomes = {x["id"]: x["nome"] for x in turmas}; nomes["OUT"] = "Outra turma · visitante"
+    return DEC_HTML.replace("__ENDS__", json.dumps(fins, ensure_ascii=False)).replace("__TURMAS__", json.dumps(nomes, ensure_ascii=False))
+
+DEC_HTML = r"""  <section class="dec" id="decoder">
+    <h2>Decodificador dos códigos de resultado</h2>
+    <p class="hint">No fim da partida, quando as três frases passam, o aluno recebe um código. Cole os códigos aqui, <b>um por linha</b>;
+      pode pôr o nome antes (<i>Ana CG-I2M-7-064-071-1-K</i>). A turma vem dentro do código, e cada turma ganha a sua tabela.
+      Tudo é calculado aqui mesmo, sem internet, e nada é enviado.</p>
+    <textarea id="dec-in" spellcheck="false" placeholder="Ana CG-I2M-7-064-071-1-K"></textarea>
+    <p><button type="button" id="dec-copy" style="font:inherit;font-weight:700;color:#fff;background:var(--berry);border:0;border-radius:10px;padding:8px 14px;cursor:pointer" hidden>📋 Copiar a tabela (para planilha)</button>
+      <span class="hint" id="dec-msg"></span></p>
+    <div class="tab" id="dec-out"></div>
+  </section>
+<script>
+const ENDS = __ENDS__, TURMAS = __TURMAS__;
+const DEC_RX = /CG\s*-\s*([A-Za-z0-9]{3})\s*-\s*(\d)\s*-\s*(\d{3})\s*-\s*(\d{3})\s*-\s*(\d)\s*-\s*([A-Za-z])/i;
+const decCheck = body => String.fromCharCode(65 + [...body].reduce((s, c) => s + c.charCodeAt(0), 0) % 26);
+const decEsc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+function decLine(line) {
+  const m = line.match(DEC_RX); if (!m) return line.trim() ? { bad: line.trim() } : null;
+  const tur = m[1].toUpperCase(), fim = +m[2], body = `CG-${tur}-${fim}-${m[3]}-${m[4]}-${m[5]}`;
+  const name = line.replace(m[0], "").replace(/^[\s:;,|–-]+|[\s:;,|–-]+$/g, "");
+  return { name, tur, fim, cash: +m[3], rep: +m[4], aj: +m[5], ok: decCheck(body) === m[6].toUpperCase(), E: ENDS[fim - 1] };
+}
+let decRows = [];
+function decRender() {
+  const lines = document.getElementById("dec-in").value.split("\n").map(decLine).filter(Boolean);
+  const out = document.getElementById("dec-out"), msg = document.getElementById("dec-msg");
+  decRows = [];
+  if (!lines.length) { out.innerHTML = ""; msg.textContent = ""; document.getElementById("dec-copy").hidden = true; return; }
+  const turNome = t => TURMAS[t] || "turma " + t, FAIXA = ["fracasso", "meio-termo", "sucesso"];
+  const turmas = [...new Set(lines.filter(r => r.E).map(r => r.tur))].sort();
+  out.innerHTML = turmas.map(tur => {
+    const rows = lines.filter(r => r.E && r.tur === tur);
+    const body = rows.map(r => {
+      decRows.push([r.name || "—", turNome(tur), r.E.nome, FAIXA[r.E.tier] || "", r.cash, r.rep, `${3 - r.aj} de 3`, r.ok ? "ok" : "conferir"]);
+      return `<tr><td>${decEsc(r.name || "—")}</td><td>${decEsc(r.E.nome)} <span class="hint">(${FAIXA[r.E.tier] || ""})</span></td><td>💰 ${r.cash}</td><td>⭐ ${r.rep}</td>
+        <td>${3 - r.aj} de 3</td><td>${r.ok ? "✓" : '<span class="err">conferir a cópia</span>'}</td></tr>`;
+    }).join("");
+    const okRows = rows.filter(r => r.ok), n = t => okRows.filter(r => r.E.tier === t).length;   // o resumo conta só os códigos conferidos
+    return `<h3>${decEsc(turNome(tur))} · ${rows.length} ${rows.length === 1 ? "partida" : "partidas"}</h3>
+      <table><thead><tr><th>Aluno</th><th>Final</th><th>Caixa</th><th>Reputação</th><th>Frases escritas sem ajuda</th><th>Cópia</th></tr></thead><tbody>${body}</tbody>
+      <tfoot><tr><th>Turma <span class="hint">(códigos conferidos)</span></th><td colspan="5">sucesso: ${n(2)} · meio-termo: ${n(1)} · fracasso: ${n(0)}</td></tr></tfoot></table>`;
+  }).join("");
+  const bad = lines.filter(r => r.bad || !r.E), wrong = lines.filter(r => r.E && !r.ok);
+  msg.textContent = [bad.length ? `${bad.length} linha(s) sem código reconhecido.` : "", wrong.length ? `${wrong.length} código(s) com a letra de conferência errada: provavelmente copiados com erro.` : ""].join(" ");
+  document.getElementById("dec-copy").hidden = !decRows.length;
+}
+document.getElementById("dec-in").addEventListener("input", decRender);
+document.getElementById("dec-copy").addEventListener("click", () => {
+  const tsv = [["Aluno", "Turma", "Final", "Faixa", "Caixa", "Reputação", "Frases sem ajuda", "Cópia"], ...decRows].map(r => r.join("\t")).join("\n");
+  const done = () => { document.getElementById("dec-msg").textContent = "Tabela copiada: cole na planilha."; };
+  if (navigator.clipboard) navigator.clipboard.writeText(tsv).then(done, () => { prompt("Copie a tabela:", tsv); });
+  else prompt("Copie a tabela:", tsv);
+});
+</script>
+"""
 
 # ---------------- aplicativo (PWA): instalar no celular e abrir sem internet ----------------
 ICONES = ["icon-192.png", "icon-512.png", "apple-touch-icon.png"]
