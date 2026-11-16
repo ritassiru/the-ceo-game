@@ -21,6 +21,7 @@ fonte/decisions.json      as situações do jogo
 fonte/irreg.json          verbos irregulares do glossário
 fonte/a1.json             glossário do nível Beginner (A1): quase todas as palavras
 fonte/endings_params.json limites dos 9 finais
+fonte/turmas.json         turmas (sigla e nome) para o perfil e o código de resultado
 fonte/build.py            gera ../index.html com os dados e as fontes embutidas
 fonte/checar.py           confere o balanceamento (usa sim32.py e endings_sim.py)
 index.html                GERADO. Nunca edite à mão.
@@ -155,6 +156,18 @@ em largura de celular, para conferir.
   depois de *if* (*If I have/am/can*). *If I was* e a falta de vírgula depois do
   *If* **passam**, com dica. Toda frase que o montador forma precisa passar sem
   erro: se mudar a checagem ou uma `phrase`, teste todas as combinações (com 60 situações, 1.512 frases).
+- **Nome, turma e código de resultado (nov/2026):** na tela inicial, antes do nome
+  da startup, o aluno diz o nome e escolhe a turma (`fonte/turmas.json`: sigla de 3
+  letras ou números e nome; *Outra turma · visitante* = `OUT`). Fica no aparelho,
+  em `week:profile`, o mesmo perfil do `my-busy-week` e do `story-shelf` (é o mesmo
+  site). **Não há lista de alunos** (o site é público) e **nada é enviado**. Quando
+  as 3 frases passam, aparece o código `CG-TUR-final-caixa-reputação-ajudas-X`:
+  `final` é a posição em `ENDING_ORDER` (1 a 9), caixa e reputação têm 3 dígitos,
+  `ajudas` são as frases montadas com o *Help me write* e `X` é a letra de
+  conferência. O decodificador fica na `professor.html` (gerado pelo `build.py`, sem
+  mexer no `qr.py`; os nomes dos finais saem do próprio template) e monta uma
+  tabela por turma. A conta está em `resultCode()` (template) e em `DEC_HTML`
+  (build.py): se mudar num, mude no outro. O jogo **não tem códigos de liberação**.
 - Tudo que usa `localStorage` fica dentro de `try/catch`: o jogo precisa
   funcionar mesmo se o navegador bloquear o armazenamento.
 - Texto digitado pelo aluno (nome da startup) sempre passa por `esc()`.
@@ -165,7 +178,7 @@ em largura de celular, para conferir.
   código em MIT, fontes em OFL. Não mude sem o professor pedir.
 
 - Não adicionar bibliotecas externas, CDNs nem qualquer acesso à rede.
-- Não coletar nem enviar dados dos alunos.
+- Não coletar nem enviar dados dos alunos (o código de resultado é copiado pelo aluno; o jogo não envia nada).
 - Não reproduzir letras de música ou textos protegidos.
 - Não editar os arquivos de `aula/` sem o professor pedir.
 
